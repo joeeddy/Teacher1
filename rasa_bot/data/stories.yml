@@ -1,0 +1,80 @@
+version: "3.1"
+
+stories:
+- story: greet and ask for help
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_help
+  - action: utter_help
+
+- story: greet and ask for math lesson
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_math
+  - action: utter_math_lesson
+  - action: utter_encourage
+
+- story: greet and ask for reading lesson
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_reading
+  - action: utter_reading_lesson
+  - action: utter_encourage
+
+- story: greet and ask for spelling lesson
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_spelling
+  - action: utter_spelling_lesson
+  - action: utter_encourage
+
+- story: greet and ask for numbers lesson
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_numbers
+  - action: utter_numbers_lesson
+  - action: utter_encourage
+
+- story: direct lesson requests
+  steps:
+  - intent: ask_lesson
+  - action: utter_help
+
+- story: math lesson direct
+  steps:
+  - intent: ask_math
+  - action: utter_math_lesson
+  - action: utter_encourage
+
+- story: reading lesson direct
+  steps:
+  - intent: ask_reading
+  - action: utter_reading_lesson
+  - action: utter_encourage
+
+- story: spelling lesson direct
+  steps:
+  - intent: ask_spelling
+  - action: utter_spelling_lesson
+  - action: utter_encourage
+
+- story: numbers lesson direct
+  steps:
+  - intent: ask_numbers
+  - action: utter_numbers_lesson
+  - action: utter_encourage
+
+- story: say goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: bot challenge
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
