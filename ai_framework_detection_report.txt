@@ -1,0 +1,175 @@
+================================================================================
+AI FRAMEWORK DETECTION REPORT
+================================================================================
+Repository: /home/runner/work/Teacher1/Teacher1
+Scan Date: 2025-08-18 02:55:55.683041
+
+SUMMARY: 35 AI-related findings detected
+
+🔍 AI LIBRARY IMPORTS:
+----------------------------------------
+  File: /home/runner/work/Teacher1/Teacher1/demo.py
+  Import: numpy
+  Detected Library: numpy
+  Line: unknown
+
+  File: /home/runner/work/Teacher1/Teacher1/fractal_modules.py
+  Import: numpy
+  Detected Library: numpy
+  Line: unknown
+
+  File: /home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py
+  Import: numpy
+  Detected Library: numpy
+  Line: unknown
+
+  File: /home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py
+  Import: matplotlib.pyplot
+  Detected Library: matplotlib
+  Line: unknown
+
+🧠 CUSTOM AI CLASSES:
+----------------------------------------
+  File: /home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py
+  Class: FractalEmergentAI
+  Line: 16
+  Pattern: .*ai.*
+
+  File: /home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py
+  Class: AIFrameworkDetector
+  Line: 27
+  Pattern: .*ai.*
+
+  File: /home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py
+  Class: AIAnalysisVisitor
+  Line: 144
+  Pattern: .*ai.*
+  Base Classes: ast.NodeVisitor
+
+  File: /home/runner/work/Teacher1/Teacher1/rasa_bot/chatbot_integration.py
+  Class: Teacher1ChatBot
+  Line: 43
+  Pattern: .*bot.*
+
+⚙️ AI FUNCTIONS:
+----------------------------------------
+  File: /home/runner/work/Teacher1/Teacher1/demo.py
+  Function: demo_fractal_ai
+  Line: 61
+  Pattern: .*ai.*
+
+  File: /home/runner/work/Teacher1/Teacher1/demo.py
+  Function: main
+  Line: 133
+  Pattern: .*ai.*
+
+  File: /home/runner/work/Teacher1/Teacher1/setup.py
+  Function: main
+  Line: 123
+  Pattern: .*ai.*
+
+  File: /home/runner/work/Teacher1/Teacher1/fractal_modules.py
+  Function: apply_hierarchical_attention
+  Line: 18
+  Pattern: .*attention.*
+
+  File: /home/runner/work/Teacher1/Teacher1/fractal_modules.py
+  Function: meta_learn_params
+  Line: 39
+  Pattern: .*learn.*
+
+  File: /home/runner/work/Teacher1/Teacher1/fractal_modules.py
+  Function: predictive_coding_update
+  Line: 65
+  Pattern: .*predict.*
+
+  File: /home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py
+  Function: run_ai_detection_tests
+  Line: 454
+  Pattern: .*ai.*
+
+  File: /home/runner/work/Teacher1/Teacher1/rasa_bot/chatbot_integration.py
+  Function: main
+  Line: 164
+  Pattern: .*ai.*
+
+📦 AI DEPENDENCIES:
+----------------------------------------
+  File: /home/runner/work/Teacher1/Teacher1/requirements.txt
+  Dependency: numpy>=1.21.0
+  Detected Library: numpy
+
+  File: /home/runner/work/Teacher1/Teacher1/requirements.txt
+  Dependency: matplotlib>=3.5.0
+  Detected Library: matplotlib
+
+  File: /home/runner/work/Teacher1/Teacher1/requirements.txt
+  Dependency: speechrecognition>=3.8.1
+  Detected Library: speechrecognition
+
+  File: /home/runner/work/Teacher1/Teacher1/requirements.txt
+  Dependency: tensorflow>=2.12.0,<2.16
+  Detected Library: tensorflow
+
+📞 AI FUNCTION CALLS:
+----------------------------------------
+  File: /home/runner/work/Teacher1/Teacher1/text_to_speech.py
+  Function Call: engine.runAndWait
+  Line: 17
+
+  File: /home/runner/work/Teacher1/Teacher1/demo.py
+  Function Call: demo_fractal_ai
+  Line: 151
+
+  File: /home/runner/work/Teacher1/Teacher1/demo.py
+  Function Call: main
+  Line: 176
+
+  File: /home/runner/work/Teacher1/Teacher1/setup.py
+  Function Call: main
+  Line: 155
+
+  File: /home/runner/work/Teacher1/Teacher1/big_text_gui.py
+  Function Call: app.mainloop
+  Line: 29
+
+  File: /home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py
+  Function Call: apply_hierarchical_attention
+  Line: 35
+
+  File: /home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py
+  Function Call: predictive_coding_update
+  Line: 38
+
+  File: /home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py
+  Function Call: meta_learn_params
+  Line: 39
+
+  File: /home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py
+  Function Call: FractalEmergentAI
+  Line: 77
+
+  File: /home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py
+  Function Call: ai.run
+  Line: 78
+
+  File: /home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py
+  Function Call: AIAnalysisVisitor
+  Line: 243
+
+  File: /home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py
+  Function Call: AIFrameworkDetector
+  Line: 464
+
+  File: /home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py
+  Function Call: run_ai_detection_tests
+  Line: 490
+
+  File: /home/runner/work/Teacher1/Teacher1/rasa_bot/chatbot_integration.py
+  Function Call: main
+  Line: 189
+
+⚙️ AI CONFIGURATION FILES:
+----------------------------------------
+  File: /home/runner/work/Teacher1/Teacher1/rasa_bot/config.yml
+  Keyword: train

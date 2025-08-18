@@ -1,0 +1,264 @@
+{
+  "ai_function_calls": [
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/text_to_speech.py",
+      "function_call": "engine.runAndWait",
+      "line": 17,
+      "pattern_matched": ".*ai.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/demo.py",
+      "function_call": "demo_fractal_ai",
+      "line": 151,
+      "pattern_matched": ".*ai.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/demo.py",
+      "function_call": "main",
+      "line": 176,
+      "pattern_matched": ".*ai.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/setup.py",
+      "function_call": "main",
+      "line": 155,
+      "pattern_matched": ".*ai.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/big_text_gui.py",
+      "function_call": "app.mainloop",
+      "line": 29,
+      "pattern_matched": ".*ai.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py",
+      "function_call": "apply_hierarchical_attention",
+      "line": 35,
+      "pattern_matched": ".*attention.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py",
+      "function_call": "predictive_coding_update",
+      "line": 38,
+      "pattern_matched": ".*predict.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py",
+      "function_call": "meta_learn_params",
+      "line": 39,
+      "pattern_matched": ".*learn.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py",
+      "function_call": "FractalEmergentAI",
+      "line": 77,
+      "pattern_matched": ".*ai.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py",
+      "function_call": "ai.run",
+      "line": 78,
+      "pattern_matched": ".*ai.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py",
+      "function_call": "AIAnalysisVisitor",
+      "line": 243,
+      "pattern_matched": ".*ai.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py",
+      "function_call": "AIFrameworkDetector",
+      "line": 464,
+      "pattern_matched": ".*ai.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py",
+      "function_call": "run_ai_detection_tests",
+      "line": 490,
+      "pattern_matched": ".*ai.*"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/rasa_bot/chatbot_integration.py",
+      "function_call": "main",
+      "line": 189,
+      "pattern_matched": ".*ai.*"
+    }
+  ],
+  "ai_functions": [
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/demo.py",
+      "function_name": "demo_fractal_ai",
+      "line": 61,
+      "pattern_matched": ".*ai.*",
+      "args": []
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/demo.py",
+      "function_name": "main",
+      "line": 133,
+      "pattern_matched": ".*ai.*",
+      "args": []
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/setup.py",
+      "function_name": "main",
+      "line": 123,
+      "pattern_matched": ".*ai.*",
+      "args": []
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_modules.py",
+      "function_name": "apply_hierarchical_attention",
+      "line": 18,
+      "pattern_matched": ".*attention.*",
+      "args": [
+        "ai",
+        "i",
+        "j",
+        "c",
+        "glob"
+      ]
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_modules.py",
+      "function_name": "meta_learn_params",
+      "line": 39,
+      "pattern_matched": ".*learn.*",
+      "args": [
+        "ai",
+        "i",
+        "j",
+        "c"
+      ]
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_modules.py",
+      "function_name": "predictive_coding_update",
+      "line": 65,
+      "pattern_matched": ".*predict.*",
+      "args": [
+        "ai",
+        "i",
+        "j",
+        "c",
+        "history"
+      ]
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py",
+      "function_name": "run_ai_detection_tests",
+      "line": 454,
+      "pattern_matched": ".*ai.*",
+      "args": [
+        "repo_path"
+      ]
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/rasa_bot/chatbot_integration.py",
+      "function_name": "main",
+      "line": 164,
+      "pattern_matched": ".*ai.*",
+      "args": []
+    }
+  ],
+  "ai_imports": [
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/demo.py",
+      "import": "numpy",
+      "alias": "np",
+      "module": null,
+      "detected_library": "numpy",
+      "line": "unknown"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_modules.py",
+      "import": "numpy",
+      "alias": "np",
+      "module": null,
+      "detected_library": "numpy",
+      "line": "unknown"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py",
+      "import": "numpy",
+      "alias": "np",
+      "module": null,
+      "detected_library": "numpy",
+      "line": "unknown"
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py",
+      "import": "matplotlib.pyplot",
+      "alias": "plt",
+      "module": null,
+      "detected_library": "matplotlib",
+      "line": "unknown"
+    }
+  ],
+  "custom_ai_classes": [
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/fractal_emergent_ai_gen10.py",
+      "class_name": "FractalEmergentAI",
+      "line": 16,
+      "pattern_matched": ".*ai.*",
+      "base_classes": []
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py",
+      "class_name": "AIFrameworkDetector",
+      "line": 27,
+      "pattern_matched": ".*ai.*",
+      "base_classes": []
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/test_ai_framework_detection.py",
+      "class_name": "AIAnalysisVisitor",
+      "line": 144,
+      "pattern_matched": ".*ai.*",
+      "base_classes": [
+        "ast.NodeVisitor"
+      ]
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/rasa_bot/chatbot_integration.py",
+      "class_name": "Teacher1ChatBot",
+      "line": 43,
+      "pattern_matched": ".*bot.*",
+      "base_classes": []
+    }
+  ],
+  "ai_dependencies": [
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/requirements.txt",
+      "dependency": "numpy>=1.21.0",
+      "detected_library": "numpy",
+      "line": 2
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/requirements.txt",
+      "dependency": "matplotlib>=3.5.0",
+      "detected_library": "matplotlib",
+      "line": 3
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/requirements.txt",
+      "dependency": "speechrecognition>=3.8.1",
+      "detected_library": "speechrecognition",
+      "line": 9
+    },
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/requirements.txt",
+      "dependency": "tensorflow>=2.12.0,<2.16",
+      "detected_library": "tensorflow",
+      "line": 18
+    }
+  ],
+  "ai_configs": [
+    {
+      "file": "/home/runner/work/Teacher1/Teacher1/rasa_bot/config.yml",
+      "keyword": "train",
+      "type": "config_file"
+    }
+  ]
+}
