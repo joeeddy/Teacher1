@@ -11,6 +11,7 @@ An interactive educational platform for early learners featuring AI-powered comp
 - **Text-to-Speech**: Audio output for enhanced accessibility
 - **Rasa Chatbot**: Conversational AI for educational assistance
 - **WebSocket Communication**: Real-time bidirectional communication between AI systems
+- **Web Interface**: Modern web-based chat interface with embedded content viewer
 
 ### Educational Capabilities
 - Math lessons (addition, subtraction, counting)
@@ -19,6 +20,7 @@ An interactive educational platform for early learners featuring AI-powered comp
 - Number recognition and comparison
 - Interactive conversational learning
 - AI-powered educational insights and adaptive responses
+- Embedded educational content from trusted websites
 
 ### Advanced Features
 - **Bidirectional AI Communication**: Real-time interaction between Fractal AI and Rasa chatbot
@@ -26,6 +28,9 @@ An interactive educational platform for early learners featuring AI-powered comp
 - **Educational Context Integration**: AI insights tailored for learning applications
 - **Message Deduplication**: Prevention of communication loops and spam
 - **Structured JSON Messaging**: Standardized communication format for reliability
+- **Embedded Webview Component**: Secure iframe integration for educational content
+- **Responsive Design**: Touch-optimized interface for tablets and smartphones
+- **Accessibility Features**: Screen reader support and keyboard navigation
 
 ## Quick Start
 
@@ -77,6 +82,19 @@ python rasa_bot/chatbot_integration.py --no-tts
 If any test fails, see the [Troubleshooting](#troubleshooting) section.
 
 ### Running the Applications
+
+#### Web Interface (Recommended)
+```bash
+# Start the modern web interface with embedded content viewer
+python web_interface/app.py
+```
+Then open your browser to: http://localhost:5000
+
+Features:
+- Interactive chat with embedded educational content
+- Mobile and tablet optimized
+- Secure iframe integration with trusted educational sites
+- Accessibility support for all users
 
 #### GUI Application
 ```bash
@@ -439,6 +457,7 @@ Teacher1/
 ├── requirements.txt           # Project dependencies
 ├── README.md                 # This file
 ├── WEBSOCKET_COMMUNICATION.md # WebSocket system documentation  
+├── WEB_INTERFACE_DOCUMENTATION.md # Web interface documentation
 ├── big_text_gui.py          # GUI application for early learners
 ├── speech_recognition.py     # Speech input functionality
 ├── text_to_speech.py        # Audio output functionality
@@ -447,6 +466,17 @@ Teacher1/
 ├── websocket_communication.py    # WebSocket communication core
 ├── websocket_demo.py        # WebSocket demonstration script
 ├── test_websocket_communication.py # WebSocket testing suite
+├── test_web_interface.py    # Web interface testing suite
+├── web_interface/           # Web-based chat interface
+│   ├── app.py              # Flask web application
+│   ├── config.py           # Security and configuration settings
+│   ├── templates/
+│   │   └── index.html      # Main chat interface template
+│   └── static/
+│       ├── css/
+│       │   └── style.css   # Responsive styles and accessibility
+│       └── js/
+│           └── chat.js     # Chat interaction and iframe management
 └── rasa_bot/               # Chatbot directory
     ├── README.md           # Chatbot-specific documentation
     ├── config.yml          # Rasa configuration
@@ -481,6 +511,32 @@ Teacher1/
 - `websockets` - Bidirectional WebSocket communication between AI systems
 
 ## Usage Examples
+
+### Web Interface Chat (Recommended)
+```bash
+# Start the modern web interface
+python web_interface/app.py
+```
+Then open: http://localhost:5000
+
+**Example web chat with embedded content:**
+```
+You: Show me educational content about science
+Bot: I'd love to help you learn about science! Let me show you some great educational resources.
+
+[The bot opens an embedded Wikipedia page about science in the iframe]
+
+You: Open math learning resources  
+Bot: Here are some excellent math resources from Khan Academy!
+
+[The bot opens Khan Academy math section in the iframe]
+```
+
+**Features:**
+- Touch-optimized for tablets and smartphones
+- Embedded educational content from trusted sites
+- Accessible design with screen reader support
+- Secure domain whitelisting and iframe sandboxing
 
 ### Basic Chatbot Interaction
 ```python

@@ -20,3 +20,7 @@ spacy>=3.4.0,<3.8
 
 # WebSocket communication dependencies
 websockets>=12.0
+
+# Web interface dependencies
+flask>=2.3.0
+flask-cors>=4.0.0

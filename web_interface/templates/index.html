@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Teacher1 Educational Learning Platform - Interactive Chat with Embedded Content">
+    <title>Teacher1 - Educational Learning Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="header-title">Teacher1 Learning Assistant</h1>
+            <p class="header-subtitle">Ask me anything and I'll help you learn!</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Chat Interface -->
+            <section class="chat-section" aria-label="Chat conversation">
+                <div class="chat-container">
+                    <div id="chat-messages" class="chat-messages" role="log" aria-live="polite" aria-label="Chat messages">
+                        <div class="message bot-message">
+                            <div class="message-avatar" aria-hidden="true">🤖</div>
+                            <div class="message-content">
+                                <p>Hello! I'm your learning assistant. How can I help you learn today?</p>
+                                <p>Try asking me to "show educational content about science" or "open learning resources"!</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form class="chat-input-form" id="chat-form" aria-label="Send message">
+                        <div class="input-group">
+                            <label for="message-input" class="sr-only">Type your message</label>
+                            <input 
+                                type="text" 
+                                id="message-input" 
+                                class="message-input" 
+                                placeholder="Type your message..." 
+                                autocomplete="off"
+                                maxlength="500"
+                                required
+                            >
+                            <button type="submit" class="send-button" aria-label="Send message">
+                                <span aria-hidden="true">➤</span>
+                                <span class="sr-only">Send</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Embedded Content Section -->
+            <section class="content-section" aria-label="Educational content viewer">
+                <div class="content-container">
+                    <div class="content-header">
+                        <h2 class="content-title">Educational Content</h2>
+                        <div class="content-controls">
+                            <button id="close-content" class="close-button" aria-label="Close educational content" style="display: none;">
+                                <span aria-hidden="true">✕</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="content-area" class="content-area">
+                        <div class="content-placeholder">
+                            <div class="placeholder-icon" aria-hidden="true">📚</div>
+                            <p>Educational content will appear here when requested</p>
+                            <p class="placeholder-subtext">Ask me to show you educational resources!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Loading indicator -->
+        <div id="loading-indicator" class="loading-indicator" style="display: none;" aria-hidden="true">
+            <div class="loading-spinner"></div>
+            <p>Loading...</p>
+        </div>
+
+        <!-- Error message -->
+        <div id="error-message" class="error-message" style="display: none;" role="alert" aria-live="assertive">
+            <div class="error-content">
+                <span class="error-icon" aria-hidden="true">⚠️</span>
+                <span class="error-text"></span>
+                <button class="error-close" aria-label="Dismiss error">✕</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accessibility announcement area -->
+    <div id="announcements" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>
