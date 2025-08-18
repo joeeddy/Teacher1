@@ -129,6 +129,26 @@ python rasa_bot/chatbot_integration.py --websocket --no-tts
 
 ## Real-World WebSocket Integration
 
+### 🚀 Quick Start for Production Use
+
+**For immediate testing:**
+```bash
+# Test the system works (mock mode)
+python websocket_demo.py --test
+
+# Run real integrated system
+python websocket_demo.py --both
+```
+
+**For production deployment:**
+```bash
+# Terminal 1: Start with student interaction interface
+python rasa_bot/chatbot_integration.py --websocket
+
+# Terminal 2: Start AI analysis
+python fractal_emergent_ai_gen10.py --websocket
+```
+
 ### Overview
 
 The Teacher1 platform features **real bidirectional WebSocket communication** between the Fractal AI system and Rasa chatbot. This enables dynamic, real-time AI collaboration for enhanced educational experiences where both systems can initiate conversations, share insights, and provide coordinated responses to students.
