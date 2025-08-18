@@ -2,14 +2,23 @@ import numpy as np
 
 def get_dynamic_neighborhood(ai, i, j, c):
     # Example: dynamic, deformable and possibly learned neighborhood
-    r = int(2 + ai.dynamic_params[i, j, c, 0] * 10)
+    r = max(1, min(5, int(2 + ai.dynamic_params[i, j, c, 0] * 3)))  # Limit radius to prevent huge neighborhoods
     kernel_shape = (2*r+1, 2*r+1)
-    arr = ai.state[:, :, c, 0]
+    
+    # Get neighborhood for each state dimension
     ni = [(i + dx) % ai.size for dx in range(-r, r+1)]
     nj = [(j + dy) % ai.size for dy in range(-r, r+1)]
-    neighborhood = arr[np.ix_(ni, nj)]
-    # Dynamic weights, could be learned or context-dependent
-    weights = np.tanh(np.random.randn(*kernel_shape) * ai.dynamic_params[i, j, c, 1])
+    
+    # Get full neighborhood across all state dimensions
+    neighborhood = ai.state[np.ix_(ni, nj, [c])][:, :, 0, :]  # Shape: (2r+1, 2r+1, state_dim)
+    
+    # Dynamic weights for spatial dimensions
+    spatial_weights = np.tanh(np.random.randn(*kernel_shape) * ai.dynamic_params[i, j, c, 1])
+    
+    # Expand weights to match state dimensions
+    weights = np.expand_dims(spatial_weights, axis=-1)  # Shape: (2r+1, 2r+1, 1)
+    weights = np.broadcast_to(weights, neighborhood.shape)  # Shape: (2r+1, 2r+1, state_dim)
+    
     return neighborhood, weights
 
 def param_vector_leaky_relu(x, a):
@@ -71,8 +80,26 @@ def predictive_coding_update(ai, i, j, c, history):
 def global_workspace_update(ai, i, j, c, gw, mode="cell", latest_state=None):
     # Example: update the global workspace vector
     if mode == "full" and latest_state is not None:
-        return 0.99*gw + 0.01*np.mean(latest_state, axis=(0,1,2))
+        # Average across spatial and channel dimensions, pad or truncate to match gw size
+        state_summary = np.mean(latest_state, axis=(0,1,2))
+        if len(state_summary) < len(gw):
+            # Pad with zeros if state summary is smaller
+            padded_summary = np.zeros_like(gw)
+            padded_summary[:len(state_summary)] = state_summary
+            return 0.99*gw + 0.01*padded_summary
+        else:
+            # Truncate if state summary is larger
+            return 0.99*gw + 0.01*state_summary[:len(gw)]
     elif i is not None and j is not None and c is not None:
-        return gw * 0.99 + 0.01 * ai.state[i, j, c, :]
+        # Single cell update - use a subset of the state vector that fits gw
+        state_subset = ai.state[i, j, c, :]
+        if len(state_subset) < len(gw):
+            # Pad with zeros
+            padded_state = np.zeros_like(gw)
+            padded_state[:len(state_subset)] = state_subset
+            return gw * 0.99 + 0.01 * padded_state
+        else:
+            # Truncate to fit
+            return gw * 0.99 + 0.01 * state_subset[:len(gw)]
     else:
         return gw
