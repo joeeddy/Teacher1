@@ -17,3 +17,6 @@ rasa-sdk>=3.6.0
 # Additional dependencies for Rasa
 tensorflow>=2.12.0,<2.16
 spacy>=3.4.0,<3.8
+
+# WebSocket communication dependencies
+websockets>=12.0
