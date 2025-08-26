@@ -6,17 +6,17 @@ matplotlib>=3.5.0
 # tkinter is built-in with Python
 
 # Speech and audio dependencies
-speechrecognition>=3.8.1
-pyaudio>=0.2.11
-pyttsx3>=2.90
+speechrecognition
+pyaudio
+pyttsx3
 
 # Rasa chatbot framework
 rasa>=3.6.0
 rasa-sdk>=3.6.0
 
 # Additional dependencies for Rasa
-tensorflow>=2.12.0,<2.16
-spacy>=3.4.0,<3.8
+tensorflow>=2.12.0
+spacy>=3.4.0
 
 # WebSocket communication dependencies
 websockets>=12.0
