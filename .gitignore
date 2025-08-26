@@ -210,3 +210,6 @@ __marimo__/
 rasa_bot/models/
 rasa_bot/.rasa/
 *.tar.gz
+
+# ForcastPkg analysis files (temporary analysis, not part of core project)
+automation_check_report.json
