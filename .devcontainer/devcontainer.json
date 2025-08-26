@@ -1,0 +1,33 @@
+{
+    "name": "Teacher1 Development Environment",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": true,
+            "configureZshAsDefaultShell": true,
+            "installOhMyZsh": true
+        }
+    },
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.pylint",
+                "ms-python.black-formatter",
+                "ms-python.isort",
+                "ms-toolsai.jupyter"
+            ]
+        }
+    },
+
+    "postCreateCommand": "python .devcontainer/test_setup.py && cd rasa_bot && rasa train --quiet || echo 'Rasa training will be done manually'",
+
+    "forwardPorts": [8765, 8766, 5000],
+
+    "remoteUser": "vscode"
+}
