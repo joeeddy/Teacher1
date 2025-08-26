@@ -67,7 +67,7 @@ def demo_fractal_ai():
         import numpy as np
         from fractal_modules import get_dynamic_neighborhood
         print("✓ Fractal AI components are available!")
-        print("  To run the AI system: python fractal_emergent_ai_gen10.py")
+        print("  To run the AI system: python fractal_emergent_ai.py")
         return True
     except ImportError as e:
         print(f"❌ Fractal AI not available: {e}")
@@ -116,7 +116,7 @@ Teacher1/
 ├── big_text_gui.py          # GUI for early learners
 ├── speech_recognition.py     # Voice input
 ├── text_to_speech.py        # Audio output
-├── fractal_emergent_ai_gen10.py  # Advanced AI
+├── fractal_emergent_ai.py  # Advanced AI
 ├── fractal_modules.py       # AI components
 └── rasa_bot/               # Chatbot integration
     ├── README.md           # Chatbot documentation

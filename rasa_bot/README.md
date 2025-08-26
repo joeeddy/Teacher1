@@ -95,7 +95,7 @@ To add custom actions (like integrating with the fractal AI components):
 4. Run the action server: `rasa run actions`
 
 ### Integration with Fractal AI
-The chatbot can potentially be integrated with the fractal AI system in `fractal_emergent_ai_gen10.py` for more advanced educational interactions.
+The chatbot can potentially be integrated with the fractal AI system in `fractal_emergent_ai.py` for more advanced educational interactions.
 
 ## Troubleshooting
 
