@@ -9,7 +9,7 @@
 }
 
 :root {
-    /* Color scheme for accessibility */
+    /* Color scheme for accessibility and kindergarten appeal */
     --primary-color: #005A9C;
     --secondary-color: #FFD966;
     --background-color: #E6F7FF;
@@ -21,11 +21,23 @@
     --error-color: #E74C3C;
     --warning-color: #F39C12;
     
+    /* Kindergarten-friendly colors */
+    --kindergarten-primary: #FF6B6B;
+    --kindergarten-secondary: #4ECDC4;
+    --kindergarten-accent: #FFE66D;
+    --kindergarten-success: #95E1D3;
+    --kindergarten-bg: #FFF8E1;
+    
+    /* Progress bar colors */
+    --progress-excellent: #4CAF50;
+    --progress-good: #FF9800;
+    --progress-needs-practice: #F44336;
+    
     /* Typography */
     --font-family: 'Arial', 'Helvetica', sans-serif;
-    --font-size-base: 16px;
-    --font-size-large: 1.25rem;
-    --font-size-small: 0.875rem;
+    --font-size-base: 18px; /* Larger for kindergarten */
+    --font-size-large: 1.5rem;
+    --font-size-small: 1rem;
     --line-height: 1.6;
     
     /* Spacing */
@@ -36,8 +48,8 @@
     --spacing-xl: 2rem;
     
     /* Border radius */
-    --border-radius: 0.5rem;
-    --border-radius-large: 1rem;
+    --border-radius: 0.75rem; /* More rounded for friendly appearance */
+    --border-radius-large: 1.25rem;
     
     /* Shadows */
     --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -508,5 +520,252 @@ body {
     .message-input {
         min-height: 44px;
         font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+/* Kindergarten-Specific Styles */
+/* ============================= */
+
+/* Student Login Section */
+.student-login {
+    background: var(--kindergarten-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-large);
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-light);
+}
+
+.login-form {
+    text-align: center;
+}
+
+.student-label {
+    display: block;
+    font-size: var(--font-size-large);
+    font-weight: bold;
+    color: var(--kindergarten-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.name-input-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.student-name-input {
+    flex: 1;
+    min-width: 200px;
+    padding: var(--spacing-md);
+    border: 3px solid var(--kindergarten-secondary);
+    border-radius: var(--border-radius-large);
+    font-size: var(--font-size-large);
+    text-align: center;
+    background: white;
+    transition: all var(--transition-normal);
+}
+
+.student-name-input:focus {
+    outline: none;
+    border-color: var(--kindergarten-primary);
+    box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
+    transform: scale(1.02);
+}
+
+.start-learning-btn {
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: linear-gradient(45deg, var(--kindergarten-primary), var(--kindergarten-secondary));
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-large);
+    font-size: var(--font-size-large);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-medium);
+    min-height: 60px;
+    min-width: 180px;
+}
+
+.start-learning-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-heavy);
+}
+
+.start-learning-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.3);
+}
+
+/* Progress Section */
+.progress-section {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-large);
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-light);
+    border: 3px solid var(--kindergarten-accent);
+}
+
+.student-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.student-name {
+    font-size: var(--font-size-large);
+    font-weight: bold;
+    color: var(--kindergarten-primary);
+}
+
+.end-session-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--kindergarten-secondary);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    min-height: 44px;
+}
+
+.end-session-btn:hover {
+    background: #3DBDB2;
+    transform: translateY(-1px);
+}
+
+.progress-indicators {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.progress-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.progress-label {
+    font-weight: bold;
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+}
+
+.progress-bar {
+    height: 20px;
+    background: #E0E0E0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width var(--transition-normal);
+    background: var(--progress-good);
+}
+
+.progress-fill.excellent {
+    background: var(--progress-excellent);
+}
+
+.progress-fill.good {
+    background: var(--progress-good);
+}
+
+.progress-fill.needs-practice {
+    background: var(--progress-needs-practice);
+}
+
+/* Enhanced message styling for kindergarten */
+.bot-message .message-avatar {
+    background: linear-gradient(45deg, var(--kindergarten-primary), var(--kindergarten-secondary));
+    border: 3px solid white;
+    box-shadow: var(--shadow-light);
+}
+
+.user-message .message-avatar {
+    background: linear-gradient(45deg, var(--kindergarten-accent), var(--kindergarten-success));
+    border: 3px solid white;
+    box-shadow: var(--shadow-light);
+}
+
+.message-content {
+    border: 2px solid transparent;
+    transition: all var(--transition-normal);
+}
+
+.bot-message .message-content {
+    background: linear-gradient(135deg, #F8F9FA, #E8F4FD);
+    border-color: var(--kindergarten-secondary);
+}
+
+.user-message .message-content {
+    background: linear-gradient(135deg, var(--kindergarten-primary), #FF8A95);
+}
+
+/* Responsive adjustments for kindergarten features */
+@media (max-width: 768px) {
+    .name-input-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .student-name-input {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .start-learning-btn {
+        width: 100%;
+    }
+    
+    .student-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .progress-indicators {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .student-login {
+        padding: var(--spacing-md);
+    }
+    
+    .progress-section {
+        padding: var(--spacing-md);
+    }
+    
+    .start-learning-btn {
+        min-width: auto;
+        padding: var(--spacing-md);
+    }
+}
+
+/* High contrast mode for kindergarten features */
+@media (prefers-contrast: high) {
+    .student-name-input:focus {
+        border-color: #000000;
+        box-shadow: 0 0 0 4px #FFFF00;
+    }
+    
+    .start-learning-btn:focus {
+        box-shadow: 0 0 0 4px #FFFF00;
+    }
+    
+    .progress-fill {
+        border: 2px solid #000000;
     }
 }

@@ -29,7 +29,15 @@ try:
     from rasa_bot.chatbot_integration import Teacher1ChatBot
     CHATBOT_AVAILABLE = True
 except ImportError:
-    print("Warning: Chatbot not available. Web interface will run in demo mode.")
+    print("Warning: Rasa chatbot not available. Using personalized chatbot.")
+
+# Import personalized chatbot as fallback
+PERSONALIZED_CHATBOT_AVAILABLE = False
+try:
+    from personalized_chatbot import PersonalizedKindergartenChatbot
+    PERSONALIZED_CHATBOT_AVAILABLE = True
+except ImportError:
+    print("Warning: Personalized chatbot not available. Web interface will run in demo mode.")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -52,13 +60,27 @@ class Teacher1WebInterface:
         
         # Initialize chatbot if available
         self.chatbot = None
+        self.personalized_chatbot = None
+        
         if CHATBOT_AVAILABLE:
             try:
                 self.chatbot = Teacher1ChatBot()
-                logger.info("Chatbot initialized successfully")
+                logger.info("Rasa chatbot initialized successfully")
             except Exception as e:
-                logger.error(f"Failed to initialize chatbot: {e}")
+                logger.error(f"Failed to initialize Rasa chatbot: {e}")
                 self.chatbot = None
+        
+        # Initialize personalized chatbot as fallback or primary
+        if PERSONALIZED_CHATBOT_AVAILABLE:
+            try:
+                self.personalized_chatbot = PersonalizedKindergartenChatbot()
+                logger.info("Personalized chatbot initialized successfully")
+            except Exception as e:
+                logger.error(f"Failed to initialize personalized chatbot: {e}")
+                self.personalized_chatbot = None
+        
+        # Session storage for student tracking
+        self.active_sessions = {}  # session_id -> student_name
         
         # Setup routes
         self.setup_routes()
@@ -88,13 +110,92 @@ class Teacher1WebInterface:
                 if len(user_message) > 500:
                     return jsonify({'error': 'Message too long (max 500 characters)'}), 400
                 
+                # Get session ID from request
+                session_id = data.get('session_id', 'default')
+                student_name = data.get('student_name')
+                
                 # Process the message
-                response = self.process_message(user_message)
+                response = self.process_message(user_message, session_id, student_name)
                 return jsonify(response)
                 
             except Exception as e:
                 logger.error(f"Error processing chat message: {e}")
                 return jsonify({'error': 'Internal server error'}), 500
+        
+        @self.app.route('/start_session', methods=['POST'])
+        def start_session():
+            """Start a new personalized learning session"""
+            try:
+                data = request.get_json()
+                if not data or 'student_name' not in data:
+                    return jsonify({'error': 'Student name required'}), 400
+                
+                student_name = data['student_name'].strip()
+                if not student_name:
+                    return jsonify({'error': 'Student name cannot be empty'}), 400
+                
+                session_id = data.get('session_id', 'default')
+                
+                if self.personalized_chatbot:
+                    greeting = self.personalized_chatbot.start_session(student_name)
+                    self.active_sessions[session_id] = student_name
+                    
+                    return jsonify({
+                        'message': greeting,
+                        'session_started': True,
+                        'student_name': student_name,
+                        'session_id': session_id
+                    })
+                else:
+                    return jsonify({
+                        'message': f"Hi {student_name}! Let's learn together!",
+                        'session_started': True,
+                        'student_name': student_name,
+                        'session_id': session_id
+                    })
+                    
+            except Exception as e:
+                logger.error(f"Error starting session: {e}")
+                return jsonify({'error': 'Failed to start session'}), 500
+        
+        @self.app.route('/end_session', methods=['POST'])
+        def end_session():
+            """End the current learning session"""
+            try:
+                data = request.get_json()
+                session_id = data.get('session_id', 'default')
+                
+                if self.personalized_chatbot and session_id in self.active_sessions:
+                    goodbye = self.personalized_chatbot.end_session()
+                    del self.active_sessions[session_id]
+                    
+                    return jsonify({
+                        'message': goodbye,
+                        'session_ended': True
+                    })
+                else:
+                    return jsonify({
+                        'message': "Thanks for learning with me! Come back soon!",
+                        'session_ended': True
+                    })
+                    
+            except Exception as e:
+                logger.error(f"Error ending session: {e}")
+                return jsonify({'error': 'Failed to end session'}), 500
+        
+        @self.app.route('/progress/<session_id>')
+        def get_progress(session_id):
+            """Get student progress for the session"""
+            try:
+                if self.personalized_chatbot and session_id in self.active_sessions:
+                    summary = self.personalized_chatbot.get_student_progress_summary()
+                    return jsonify(summary)
+                else:
+                    return jsonify({'error': 'No active session found'}), 404
+                    
+            except Exception as e:
+                logger.error(f"Error getting progress: {e}")
+                return jsonify({'error': 'Failed to get progress'}), 500
         
         @self.app.route('/health')
         def health():
@@ -102,6 +203,8 @@ class Teacher1WebInterface:
             return jsonify({
                 'status': 'healthy',
                 'chatbot_available': CHATBOT_AVAILABLE,
+                'personalized_chatbot_available': PERSONALIZED_CHATBOT_AVAILABLE,
+                'active_sessions': len(self.active_sessions),
                 'version': '1.0.0'
             })
     
@@ -127,34 +230,70 @@ class Teacher1WebInterface:
             
             return response
     
-    def process_message(self, message: str) -> Dict[str, Any]:
+    def process_message(self, message: str, session_id: str = 'default', student_name: str = None) -> Dict[str, Any]:
         """Process user message and return response with optional embedded content"""
         
         # Check for URL-related intents
         embed_info = self.check_for_embed_intent(message)
         
-        # Get chatbot response
-        if CHATBOT_AVAILABLE and self.chatbot:
+        # Use personalized chatbot if available and session is active
+        if PERSONALIZED_CHATBOT_AVAILABLE and self.personalized_chatbot and session_id in self.active_sessions:
+            try:
+                bot_response, metadata = self.personalized_chatbot.get_response(message)
+                
+                response = {
+                    'message': bot_response,
+                    'timestamp': self.get_timestamp(),
+                    'personalized': True
+                }
+                
+                # Add metadata if available
+                if metadata:
+                    response.update(metadata)
+                
+            except Exception as e:
+                logger.error(f"Personalized chatbot error: {e}")
+                bot_response = self.get_fallback_response(message)
+                response = {
+                    'message': bot_response,
+                    'timestamp': self.get_timestamp(),
+                    'personalized': False
+                }
+        
+        # Try Rasa chatbot as fallback
+        elif CHATBOT_AVAILABLE and self.chatbot:
             try:
                 # Use async chatbot if available
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
                 try:
                     bot_response = loop.run_until_complete(
-                        self.chatbot.get_response(message, "web_user")
+                        self.chatbot.get_response(message, session_id)
                     )
                 finally:
                     loop.close()
+                    
+                response = {
+                    'message': bot_response,
+                    'timestamp': self.get_timestamp(),
+                    'personalized': False
+                }
             except Exception as e:
                 logger.error(f"Chatbot error: {e}")
                 bot_response = self.get_fallback_response(message)
+                response = {
+                    'message': bot_response,
+                    'timestamp': self.get_timestamp(),
+                    'personalized': False
+                }
         else:
+            # Fallback response
             bot_response = self.get_fallback_response(message)
-        
-        response = {
-            'message': bot_response,
-            'timestamp': self.get_timestamp()
-        }
+            response = {
+                'message': bot_response,
+                'timestamp': self.get_timestamp(),
+                'personalized': False
+            }
         
         # Add embed information if found
         if embed_info:

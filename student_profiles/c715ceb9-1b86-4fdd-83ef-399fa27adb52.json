@@ -1,0 +1,62 @@
+{
+  "student_id": "c715ceb9-1b86-4fdd-83ef-399fa27adb52",
+  "name": "Sofia",
+  "age": 5,
+  "created_at": "2025-08-26T13:17:38.742496",
+  "progress": {
+    "math": {
+      "level": 1,
+      "score": 0,
+      "attempts": 0,
+      "successes": 0
+    },
+    "reading": {
+      "level": 1,
+      "score": 0,
+      "attempts": 0,
+      "successes": 0
+    },
+    "spelling": {
+      "level": 1,
+      "score": 0,
+      "attempts": 0,
+      "successes": 0
+    },
+    "numbers": {
+      "level": 1,
+      "score": 0,
+      "attempts": 0,
+      "successes": 0
+    }
+  },
+  "learning_style": {
+    "visual": 0.33,
+    "auditory": 0.33,
+    "kinesthetic": 0.34
+  },
+  "engagement": {
+    "attention_span": 300,
+    "positive_responses": 0,
+    "negative_responses": 0,
+    "frustration_indicators": 0,
+    "excitement_indicators": 0
+  },
+  "sessions": [
+    {
+      "session_id": "7c0b3cde-17ec-4acb-8f0a-82a132e739fa",
+      "start_time": "2025-08-26T13:17:38.742729",
+      "end_time": "2025-08-26T13:17:42.744683",
+      "activities": [],
+      "total_score": 0,
+      "subjects_covered": [],
+      "engagement_level": "neutral"
+    }
+  ],
+  "last_active": "2025-08-26T13:17:38.742735",
+  "preferences": {
+    "favorite_subject": null,
+    "difficulty_preference": "adaptive",
+    "interaction_style": "encouraging",
+    "break_frequency": 10
+  }
+}
