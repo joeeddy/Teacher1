@@ -1,0 +1,161 @@
+{
+  "timestamp": "2025-08-26T22:39:45.070469",
+  "duration": 0.013269424438476562,
+  "statistics": {
+    "total": 21,
+    "passed": 21,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "success_rate": 100.0
+  },
+  "results": [
+    {
+      "test_name": "Student Creation",
+      "status": "PASS",
+      "details": "Created student: Alice, ID: f9c4364e-299e-46eb-9a75-921a3f88dae6",
+      "error": "",
+      "timestamp": 1756247985.0611224
+    },
+    {
+      "test_name": "Session Management",
+      "status": "PASS",
+      "details": "Started session: e2e2b30e-7c0d-4c63-8db8-6ef45b0f2ee6",
+      "error": "",
+      "timestamp": 1756247985.0611358
+    },
+    {
+      "test_name": "Activity Recording",
+      "status": "PASS",
+      "details": "Successfully recorded math activity",
+      "error": "",
+      "timestamp": 1756247985.0611513
+    },
+    {
+      "test_name": "Profile Manager",
+      "status": "PASS",
+      "details": "Manager created 5 students",
+      "error": "",
+      "timestamp": 1756247985.0616364
+    },
+    {
+      "test_name": "Assessment Initialization",
+      "status": "PASS",
+      "details": "Assessment system initialized with skill levels",
+      "error": "",
+      "timestamp": 1756247985.061932
+    },
+    {
+      "test_name": "Skill Level Structure",
+      "status": "PASS",
+      "details": "Math: 5 levels, Reading: 5 levels",
+      "error": "",
+      "timestamp": 1756247985.0619352
+    },
+    {
+      "test_name": "Chatbot Initialization",
+      "status": "PASS",
+      "details": "Chatbot initialized with student manager and educational content",
+      "error": "",
+      "timestamp": 1756247985.0623114
+    },
+    {
+      "test_name": "Educational Content",
+      "status": "PASS",
+      "details": "Content includes 4 subjects with multiple difficulty levels",
+      "error": "",
+      "timestamp": 1756247985.062314
+    },
+    {
+      "test_name": "Web Config Initialization",
+      "status": "PASS",
+      "details": "Config loaded with 16 allowed domains",
+      "error": "",
+      "timestamp": 1756247985.06276
+    },
+    {
+      "test_name": "Domain Validation",
+      "status": "PASS",
+      "details": "Domain whitelist working correctly",
+      "error": "",
+      "timestamp": 1756247985.0628085
+    },
+    {
+      "test_name": "Demo Script Structure",
+      "status": "PASS",
+      "details": "Found 5/5 demo functions",
+      "error": "",
+      "timestamp": 1756247985.0650506
+    },
+    {
+      "test_name": "Setup Script Structure",
+      "status": "PASS",
+      "details": "Setup script has required functions",
+      "error": "",
+      "timestamp": 1756247985.0689619
+    },
+    {
+      "test_name": "Directory Structure - rasa_bot",
+      "status": "PASS",
+      "details": "Directory exists with 6 items",
+      "error": "",
+      "timestamp": 1756247985.0691192
+    },
+    {
+      "test_name": "Directory Structure - web_interface",
+      "status": "PASS",
+      "details": "Directory exists with 5 items",
+      "error": "",
+      "timestamp": 1756247985.0691752
+    },
+    {
+      "test_name": "Directory Structure - student_profiles",
+      "status": "PASS",
+      "details": "Directory exists with 5 items",
+      "error": "",
+      "timestamp": 1756247985.0692194
+    },
+    {
+      "test_name": "Documentation - README.md",
+      "status": "PASS",
+      "details": "File exists, 20448 characters",
+      "error": "",
+      "timestamp": 1756247985.069276
+    },
+    {
+      "test_name": "Documentation - WEBSOCKET_COMMUNICATION.md",
+      "status": "PASS",
+      "details": "File exists, 10582 characters",
+      "error": "",
+      "timestamp": 1756247985.0693276
+    },
+    {
+      "test_name": "Documentation - WEB_INTERFACE_DOCUMENTATION.md",
+      "status": "PASS",
+      "details": "File exists, 9993 characters",
+      "error": "",
+      "timestamp": 1756247985.0693722
+    },
+    {
+      "test_name": "Documentation - requirements.txt",
+      "status": "PASS",
+      "details": "File exists, 465 characters",
+      "error": "",
+      "timestamp": 1756247985.0694127
+    },
+    {
+      "test_name": "Integration Workflow",
+      "status": "PASS",
+      "details": "Complete session with 3 activities",
+      "error": "",
+      "timestamp": 1756247985.0695536
+    },
+    {
+      "test_name": "System Integration",
+      "status": "PASS",
+      "details": "Assessment and chatbot systems initialized successfully",
+      "error": "",
+      "timestamp": 1756247985.0695784
+    }
+  ]
+}
