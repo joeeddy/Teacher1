@@ -1,0 +1,62 @@
+{
+  "student_id": "a4a3a085-9f3e-4b78-a02b-49e73147ff38",
+  "name": "Emma",
+  "age": 5,
+  "created_at": "2025-08-26T13:16:15.391195",
+  "progress": {
+    "math": {
+      "level": 1,
+      "score": 0,
+      "attempts": 0,
+      "successes": 0
+    },
+    "reading": {
+      "level": 1,
+      "score": 0,
+      "attempts": 0,
+      "successes": 0
+    },
+    "spelling": {
+      "level": 1,
+      "score": 0,
+      "attempts": 0,
+      "successes": 0
+    },
+    "numbers": {
+      "level": 1,
+      "score": 0,
+      "attempts": 0,
+      "successes": 0
+    }
+  },
+  "learning_style": {
+    "visual": 0.33,
+    "auditory": 0.33,
+    "kinesthetic": 0.34
+  },
+  "engagement": {
+    "attention_span": 300,
+    "positive_responses": 0,
+    "negative_responses": 0,
+    "frustration_indicators": 0,
+    "excitement_indicators": 0
+  },
+  "sessions": [
+    {
+      "session_id": "d551ef35-bd22-466a-bf31-a945fda8607e",
+      "start_time": "2025-08-26T13:17:28.736566",
+      "end_time": "2025-08-26T13:17:32.738453",
+      "activities": [],
+      "total_score": 0,
+      "subjects_covered": [],
+      "engagement_level": "neutral"
+    }
+  ],
+  "last_active": "2025-08-26T13:17:28.736568",
+  "preferences": {
+    "favorite_subject": null,
+    "difficulty_preference": "adaptive",
+    "interaction_style": "encouraging",
+    "break_frequency": 10
+  }
+}

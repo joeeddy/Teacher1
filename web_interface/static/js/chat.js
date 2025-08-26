@@ -1,6 +1,6 @@
 /**
- * Teacher1 Chat Interface JavaScript
- * Handles chat interactions and embedded content display
+ * Teacher1 Personalized Chat Interface JavaScript
+ * Handles chat interactions, student sessions, and progress tracking
  */
 
 class Teacher1Chat {
@@ -14,34 +14,213 @@ class Teacher1Chat {
         this.errorMessage = document.getElementById('error-message');
         this.announcements = document.getElementById('announcements');
         
+        // Student session elements
+        this.studentLogin = document.getElementById('student-login');
+        this.progressSection = document.getElementById('progress-section');
+        this.studentNameInput = document.getElementById('student-name-input');
+        this.startLearningBtn = document.getElementById('start-learning-btn');
+        this.endSessionBtn = document.getElementById('end-session-btn');
+        this.currentStudentName = document.getElementById('current-student-name');
+        
+        // Progress bars
+        this.progressBars = {
+            math: document.getElementById('math-progress'),
+            reading: document.getElementById('reading-progress'),
+            spelling: document.getElementById('spelling-progress'),
+            numbers: document.getElementById('numbers-progress')
+        };
+        
         this.isLoading = false;
         this.messageHistory = [];
+        this.sessionId = this.generateSessionId();
+        this.studentName = null;
+        this.sessionActive = false;
         
         this.init();
+    }
+    
+    generateSessionId() {
+        return 'session_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
     }
     
     init() {
         // Bind event listeners
         this.chatForm.addEventListener('submit', this.handleMessageSubmit.bind(this));
-        this.closeContentBtn.addEventListener('click', this.closeEmbeddedContent.bind(this));
-        this.errorMessage.querySelector('.error-close').addEventListener('click', this.hideError.bind(this));
+        if (this.closeContentBtn) {
+            this.closeContentBtn.addEventListener('click', this.closeEmbeddedContent.bind(this));
+        }
+        if (this.errorMessage) {
+            this.errorMessage.querySelector('.error-close').addEventListener('click', this.hideError.bind(this));
+        }
+        
+        // Student session event listeners
+        this.startLearningBtn.addEventListener('click', this.startLearningSession.bind(this));
+        this.endSessionBtn.addEventListener('click', this.endLearningSession.bind(this));
+        this.studentNameInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                this.startLearningSession();
+            }
+        });
         
         // Handle keyboard navigation
         this.messageInput.addEventListener('keydown', this.handleKeyDown.bind(this));
         
-        // Focus on input initially
-        this.messageInput.focus();
+        // Focus on student name input initially
+        this.studentNameInput.focus();
         
         // Add accessibility announcements
-        this.announceToScreenReader('Chat interface loaded. Type a message to start learning.');
+        this.announceToScreenReader('Teacher1 learning interface loaded. Please enter your name to start learning.');
+        
+        // Start progress polling when session is active
+        this.startProgressPolling();
     }
     
     handleKeyDown(event) {
         // Allow Enter to submit (unless Shift+Enter for newlines in future)
-        if (event.key === 'Enter' && !event.shiftKey) {
+        if (event.key === 'Enter' && !event.shiftKey && this.sessionActive) {
             event.preventDefault();
             this.chatForm.dispatchEvent(new Event('submit'));
         }
+    }
+    
+    async startLearningSession() {
+        const name = this.studentNameInput.value.trim();
+        if (!name) {
+            this.showError('Please enter your name to start learning!');
+            this.studentNameInput.focus();
+            return;
+        }
+        
+        try {
+            this.setLoading(true);
+            
+            const response = await fetch('/start_session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    student_name: name,
+                    session_id: this.sessionId
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            // Update UI
+            this.studentName = name;
+            this.sessionActive = true;
+            this.currentStudentName.textContent = name;
+            
+            // Hide login form and show progress section
+            this.studentLogin.style.display = 'none';
+            this.progressSection.style.display = 'block';
+            
+            // Add welcome message
+            this.addMessage(data.message, 'bot');
+            
+            // Focus on chat input
+            this.messageInput.focus();
+            
+            this.announceToScreenReader(`Welcome ${name}! Your learning session has started.`);
+            
+        } catch (error) {
+            this.showError(`Failed to start session: ${error.message}`);
+        } finally {
+            this.setLoading(false);
+        }
+    }
+    
+    async endLearningSession() {
+        if (!this.sessionActive) return;
+        
+        try {
+            this.setLoading(true);
+            
+            const response = await fetch('/end_session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    session_id: this.sessionId
+                })
+            });
+            
+            const data = await response.json();
+            
+            // Add goodbye message
+            if (data.message) {
+                this.addMessage(data.message, 'bot');
+            }
+            
+            // Reset UI
+            this.sessionActive = false;
+            this.studentName = null;
+            this.sessionId = this.generateSessionId();
+            
+            // Show login form and hide progress section
+            this.studentLogin.style.display = 'block';
+            this.progressSection.style.display = 'none';
+            
+            // Clear student name input
+            this.studentNameInput.value = '';
+            this.studentNameInput.focus();
+            
+            this.announceToScreenReader('Learning session ended. Enter your name to start a new session.');
+            
+        } catch (error) {
+            this.showError(`Failed to end session: ${error.message}`);
+        } finally {
+            this.setLoading(false);
+        }
+    }
+    
+    async updateProgress() {
+        if (!this.sessionActive) return;
+        
+        try {
+            const response = await fetch(`/progress/${this.sessionId}`);
+            
+            if (response.ok) {
+                const progress = await response.json();
+                
+                // Update progress bars
+                if (progress.progress) {
+                    for (const [subject, data] of Object.entries(progress.progress)) {
+                        if (this.progressBars[subject] && data.attempts > 0) {
+                            const successRate = (data.successes / data.attempts) * 100;
+                            this.progressBars[subject].style.width = `${Math.min(successRate, 100)}%`;
+                            
+                            // Add color coding based on performance
+                            if (successRate >= 80) {
+                                this.progressBars[subject].className = 'progress-fill excellent';
+                            } else if (successRate >= 60) {
+                                this.progressBars[subject].className = 'progress-fill good';
+                            } else {
+                                this.progressBars[subject].className = 'progress-fill needs-practice';
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn('Failed to update progress:', error);
+        }
+    }
+    
+    startProgressPolling() {
+        // Update progress every 10 seconds when session is active
+        setInterval(() => {
+            if (this.sessionActive) {
+                this.updateProgress();
+            }
+        }, 10000);
     }
     
     async handleMessageSubmit(event) {
@@ -89,12 +268,22 @@ class Teacher1Chat {
     }
     
     async sendMessage(message) {
+        const payload = { 
+            message: message,
+            session_id: this.sessionId
+        };
+        
+        // Add student name if session is active
+        if (this.sessionActive && this.studentName) {
+            payload.student_name = this.studentName;
+        }
+        
         const response = await fetch('/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message: message }),
+            body: JSON.stringify(payload),
         });
         
         if (!response.ok) {
@@ -111,7 +300,7 @@ class Teacher1Chat {
         const avatar = document.createElement('div');
         avatar.className = 'message-avatar';
         avatar.setAttribute('aria-hidden', 'true');
-        avatar.textContent = sender === 'bot' ? '🤖' : '👤';
+        avatar.textContent = sender === 'bot' ? '🎓' : '👶';
         
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';

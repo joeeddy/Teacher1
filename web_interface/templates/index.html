@@ -10,8 +10,63 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1 class="header-title">Teacher1 Learning Assistant</h1>
-            <p class="header-subtitle">Ask me anything and I'll help you learn!</p>
+            <h1 class="header-title">Teacher1 Kindergarten Learning Assistant</h1>
+            <p class="header-subtitle">Let's learn and have fun together!</p>
+            
+            <!-- Student Login Section -->
+            <div class="student-login" id="student-login">
+                <div class="login-form">
+                    <label for="student-name-input" class="student-label">What's your name?</label>
+                    <div class="name-input-group">
+                        <input 
+                            type="text" 
+                            id="student-name-input" 
+                            class="student-name-input" 
+                            placeholder="Enter your name..." 
+                            maxlength="50"
+                        >
+                        <button type="button" id="start-learning-btn" class="start-learning-btn">
+                            Start Learning! 🎓
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Indicator (hidden initially) -->
+            <div class="progress-section" id="progress-section" style="display: none;">
+                <div class="student-info">
+                    <span class="student-name" id="current-student-name"></span>
+                    <button type="button" id="end-session-btn" class="end-session-btn">
+                        Finish Learning 📚
+                    </button>
+                </div>
+                <div class="progress-indicators">
+                    <div class="progress-item">
+                        <span class="progress-label">Math:</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="math-progress"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <span class="progress-label">Reading:</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="reading-progress"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <span class="progress-label">Spelling:</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="spelling-progress"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <span class="progress-label">Numbers:</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="numbers-progress"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <main class="main-content">
@@ -20,10 +75,10 @@
                 <div class="chat-container">
                     <div id="chat-messages" class="chat-messages" role="log" aria-live="polite" aria-label="Chat messages">
                         <div class="message bot-message">
-                            <div class="message-avatar" aria-hidden="true">🤖</div>
+                            <div class="message-avatar" aria-hidden="true">🎓</div>
                             <div class="message-content">
-                                <p>Hello! I'm your learning assistant. How can I help you learn today?</p>
-                                <p>Try asking me to "show educational content about science" or "open learning resources"!</p>
+                                <p>Hi there! I'm Teacher1, your friendly learning assistant!</p>
+                                <p>Please enter your name above to start our personalized learning adventure together! 🌟</p>
                             </div>
                         </div>
                     </div>
