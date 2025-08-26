@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 def run_fractal_ai():
     """Run the Fractal AI system with WebSocket communication."""
     try:
-        from fractal_emergent_ai_gen10 import FractalEmergentAI
+        from fractal_emergent_ai import FractalEmergentAI
         
         print("🧠 Starting Fractal AI with WebSocket communication...")
         print("   Server: localhost:8765")

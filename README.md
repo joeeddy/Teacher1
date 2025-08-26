@@ -73,7 +73,7 @@ python websocket_demo.py --both
 **Verify Individual Components:**
 ```bash
 # Test Fractal AI visualization
-python fractal_emergent_ai_gen10.py --quick
+python fractal_emergent_ai.py --quick
 
 # Test Rasa chatbot
 python rasa_bot/chatbot_integration.py --no-tts
@@ -113,7 +113,7 @@ python speech_recognition.py
 
 #### Fractal AI System
 ```bash
-python fractal_emergent_ai_gen10.py
+python fractal_emergent_ai.py
 ```
 
 #### Rasa Chatbot
@@ -141,7 +141,7 @@ python websocket_demo.py --test
 python websocket_demo.py --both
 
 # Run individual systems with WebSocket enabled
-python fractal_emergent_ai_gen10.py --websocket --quick
+python fractal_emergent_ai.py --websocket --quick
 python rasa_bot/chatbot_integration.py --websocket --no-tts
 ```
 
@@ -164,7 +164,7 @@ python websocket_demo.py --both
 python rasa_bot/chatbot_integration.py --websocket
 
 # Terminal 2: Start AI analysis
-python fractal_emergent_ai_gen10.py --websocket
+python fractal_emergent_ai.py --websocket
 ```
 
 ### Overview
@@ -209,7 +209,7 @@ Test that both AI systems can run independently before enabling WebSocket commun
 
 ```bash
 # Test Fractal AI (should display visualization)
-python fractal_emergent_ai_gen10.py --quick
+python fractal_emergent_ai.py --quick
 
 # Test Rasa chatbot (should start interactive session)
 python rasa_bot/chatbot_integration.py --no-tts
@@ -291,7 +291,7 @@ Monitor the logs for bidirectional message exchange:
 #### Method 1: Individual System Deployment
 ```bash
 # Terminal 1: Start Fractal AI with WebSocket
-python fractal_emergent_ai_gen10.py --websocket --quick
+python fractal_emergent_ai.py --websocket --quick
 
 # Terminal 2: Start Rasa with WebSocket  
 python rasa_bot/chatbot_integration.py --websocket --no-tts
@@ -303,7 +303,7 @@ python rasa_bot/chatbot_integration.py --websocket --no-tts
 python rasa_bot/chatbot_integration.py --websocket
 
 # In another terminal, run AI analysis
-python fractal_emergent_ai_gen10.py --websocket
+python fractal_emergent_ai.py --websocket
 ```
 
 **Student Interaction Example:**
@@ -461,7 +461,7 @@ Teacher1/
 ├── big_text_gui.py          # GUI application for early learners
 ├── speech_recognition.py     # Speech input functionality
 ├── text_to_speech.py        # Audio output functionality
-├── fractal_emergent_ai_gen10.py  # Advanced AI system
+├── fractal_emergent_ai.py  # Advanced AI system
 ├── fractal_modules.py       # AI system modules
 ├── websocket_communication.py    # WebSocket communication core
 ├── websocket_demo.py        # WebSocket demonstration script
@@ -558,7 +558,7 @@ python rasa_bot/chatbot_integration.py
 python rasa_bot/chatbot_integration.py --websocket
 
 # In another terminal, monitor AI insights
-python fractal_emergent_ai_gen10.py --websocket
+python fractal_emergent_ai.py --websocket
 ```
 
 **Example interaction flow:**
@@ -602,7 +602,7 @@ The platform is designed for integration. For example, you could:
 python websocket_demo.py --both
 
 # Individual system deployment
-python fractal_emergent_ai_gen10.py --websocket --quick
+python fractal_emergent_ai.py --websocket --quick
 python rasa_bot/chatbot_integration.py --websocket --no-tts
 ```
 
@@ -629,7 +629,7 @@ See [Real-World WebSocket Integration](#real-world-websocket-integration) sectio
 
 ### Customizing the AI System
 
-The fractal AI system in `fractal_emergent_ai_gen10.py` can be extended for:
+The fractal AI system in `fractal_emergent_ai.py` can be extended for:
 - Pattern recognition in student responses
 - Adaptive learning algorithms
 - Educational content generation

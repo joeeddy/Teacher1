@@ -84,7 +84,7 @@ python websocket_demo.py --both
 
 **Fractal AI with WebSocket:**
 ```bash
-python fractal_emergent_ai_gen10.py --websocket --quick
+python fractal_emergent_ai.py --websocket --quick
 ```
 
 **Rasa Chatbot with WebSocket:**
@@ -286,7 +286,7 @@ Error: [Errno 111] Connection refused
 ```bash
 # Start systems in order
 # Terminal 1: Start Fractal AI
-python fractal_emergent_ai_gen10.py --websocket
+python fractal_emergent_ai.py --websocket
 
 # Terminal 2: Start Rasa (after AI is running)  
 python rasa_bot/chatbot_integration.py --websocket
