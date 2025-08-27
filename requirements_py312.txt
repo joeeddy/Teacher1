@@ -1,0 +1,28 @@
+# Core dependencies for Teacher1 project - Python 3.12 compatible
+numpy>=1.24.0
+matplotlib>=3.7.0
+
+# GUI dependencies
+# tkinter is built-in with Python
+
+# Speech and audio dependencies
+SpeechRecognition>=3.10.0
+PyAudio>=0.2.11
+pyttsx3>=2.90
+
+# Alternative Rasa setup for Python 3.12
+# Note: Rasa 3.6+ may not be available for Python 3.12 yet
+# Using compatible versions or alternatives
+rasa>=3.7.0,<4.0.0
+rasa-sdk>=3.7.0,<4.0.0
+
+# ML dependencies compatible with Python 3.12
+tensorflow>=2.13.0
+spacy>=3.7.0
+
+# WebSocket communication dependencies
+websockets>=12.0
+
+# Web interface dependencies
+Flask>=2.3.0
+flask-cors>=4.0.0

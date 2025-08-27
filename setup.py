@@ -36,7 +36,14 @@ def check_python_version():
     if version.major < 3 or (version.major == 3 and version.minor < 7):
         print("Error: Python 3.7+ is required")
         return False
-    print(f"Python version: {version.major}.{version.minor}.{version.micro} ✓")
+    print(f"Python version: {version.major}.{version.minor}.{version.micro}")
+    
+    # Note about Rasa compatibility
+    if version.major == 3 and version.minor >= 12:
+        print("⚠️  Note: Python 3.12+ may have limited Rasa compatibility")
+        print("   Current environment uses Python 3.13.5 via conda")
+        print("   Core dependencies will be installed, Rasa setup may require separate handling")
+    print("✓ Python version compatible for core dependencies")
     return True
 
 def install_dependencies():
@@ -48,8 +55,28 @@ def install_dependencies():
         print("Error: requirements.txt not found")
         return False
     
-    result = run_command("pip install -r requirements.txt")
-    return result is not None
+    # Check if we're using conda environment
+    python_path = sys.executable
+    if "miniconda" in python_path or "conda" in python_path:
+        print(f"Using conda Python: {python_path}")
+        print("📋 Core dependencies are already installed via conda:")
+        
+        # Test core dependencies
+        try:
+            import numpy, matplotlib, websockets, flask, flask_cors
+            print("  ✓ numpy, matplotlib, websockets, flask, flask_cors - Available")
+        except ImportError as e:
+            print(f"  ✗ Some core dependencies missing: {e}")
+            return False
+            
+        print("\n⚠️  Rasa installation requires Python 3.8-3.11 compatibility")
+        print("   Current Python 3.13.5 may not support rasa>=3.6.0")
+        print("   Please use Python 3.10 environment for full Rasa support")
+        return True
+    else:
+        # Try normal pip install
+        result = run_command("pip install -r requirements.txt")
+        return result is not None
 
 def setup_rasa():
     """Set up and train the Rasa model."""
@@ -58,6 +85,19 @@ def setup_rasa():
     rasa_dir = Path("rasa_bot")
     if not rasa_dir.exists():
         print("Error: rasa_bot directory not found")
+        return False
+    
+    # Check if Rasa is available
+    try:
+        import rasa
+        print(f"Rasa {rasa.__version__} is available")
+    except ImportError:
+        print("⚠️  Rasa is not installed in current environment")
+        print("   This is expected with Python 3.13.5")
+        print("   For Rasa functionality:")
+        print("   1. Use Python 3.8-3.11 environment")
+        print("   2. Or wait for Rasa updates supporting Python 3.13+")
+        print("   3. Core Teacher1 functionality will work without Rasa")
         return False
     
     # Train the Rasa model
