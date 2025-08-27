@@ -46,8 +46,169 @@ def check_python_version():
     print("✓ Python version compatible for core dependencies")
     return True
 
+def install_system_package(package_name):
+    """Attempt to install a system package using apt-get."""
+    print(f"🔧 Attempting to install system package: {package_name}")
+    try:
+        result = run_command(f"sudo apt-get update", check=False)
+        if result and result.returncode == 0:
+            result = run_command(f"sudo apt-get install -y {package_name}", check=False)
+            if result and result.returncode == 0:
+                print(f"✅ Successfully installed {package_name}")
+                return True
+        print(f"❌ Failed to install {package_name}")
+        return False
+    except Exception as e:
+        print(f"❌ Error installing {package_name}: {e}")
+        return False
+
+def install_pip_packages(packages):
+    """Attempt to install missing pip packages."""
+    if not packages:
+        return True
+    
+    print(f"🔧 Attempting to install pip packages: {', '.join(packages)}")
+    try:
+        packages_str = ' '.join(packages)
+        result = run_command(f"pip install {packages_str}", check=False)
+        if result and result.returncode == 0:
+            print(f"✅ Successfully installed pip packages")
+            return True
+        else:
+            print(f"❌ Failed to install some pip packages")
+            return False
+    except Exception as e:
+        print(f"❌ Error installing pip packages: {e}")
+        return False
+
+def test_and_install_optional_dependencies():
+    """Test and optionally install non-critical dependencies."""
+    print("\n🔍 Testing optional dependencies...")
+    
+    optional_packages = {
+        'pyttsx3': 'pyttsx3>=2.90',
+        'speech_recognition': 'SpeechRecognition>=3.10.0',
+        'pyaudio': 'pyaudio'  # Note: may require system audio libraries
+    }
+    
+    missing_packages = []
+    
+    for module_name, pip_package in optional_packages.items():
+        try:
+            __import__(module_name)
+            print(f"✓ {module_name} available")
+        except ImportError:
+            print(f"? {module_name} missing (optional)")
+            missing_packages.append(pip_package)
+    
+    if missing_packages:
+        print(f"\n🔧 Attempting to install optional packages...")
+        print("   Note: Some may fail due to system requirements (audio libraries, etc.)")
+        
+        # Try to install each package individually for better error handling
+        for package in missing_packages:
+            try:
+                module_name = package.split('>=')[0].replace('-', '_').lower()
+                result = run_command(f"pip install {package}", check=False)
+                if result and result.returncode == 0:
+                    try:
+                        __import__(module_name)
+                        print(f"✅ {module_name} successfully installed and available")
+                    except ImportError:
+                        print(f"⚠️  {module_name} installed but not available (may need system dependencies)")
+                else:
+                    print(f"⚠️  Failed to install {package} (expected for some packages)")
+            except Exception as e:
+                print(f"⚠️  Error installing {package}: {e}")
+    
+    return True  # Optional dependencies don't affect overall success
+
+def test_and_install_external_dependencies():
+    """Test and install critical external dependencies."""
+    print("\n🔍 Testing critical external dependencies...")
+    
+    critical_packages = {
+        'numpy': 'numpy>=2.3.0',
+        'matplotlib': 'matplotlib>=3.10.0', 
+        'websockets': 'websockets>=15.0',
+        'flask': 'flask>=3.1.0',
+        'flask_cors': 'flask-cors>=6.0.0'
+    }
+    
+    missing_packages = []
+    
+    for module_name, pip_package in critical_packages.items():
+        try:
+            __import__(module_name)
+            print(f"✓ {module_name} available")
+        except ImportError:
+            print(f"❌ {module_name} missing")
+            missing_packages.append(pip_package)
+    
+    if missing_packages:
+        print(f"\n🔧 Installing missing critical packages...")
+        if install_pip_packages(missing_packages):
+            # Verify installation
+            still_missing = []
+            for module_name, pip_package in critical_packages.items():
+                try:
+                    __import__(module_name)
+                    print(f"✓ {module_name} now available")
+                except ImportError:
+                    still_missing.append(module_name)
+            
+            if still_missing:
+                print(f"❌ Still missing after installation: {', '.join(still_missing)}")
+                return False
+        else:
+            return False
+    
+    print("✅ All critical external dependencies available")
+    return True
+    """Test and install critical external dependencies."""
+    print("\n🔍 Testing critical external dependencies...")
+    
+    critical_packages = {
+        'numpy': 'numpy>=2.3.0',
+        'matplotlib': 'matplotlib>=3.10.0', 
+        'websockets': 'websockets>=15.0',
+        'flask': 'flask>=3.1.0',
+        'flask_cors': 'flask-cors>=6.0.0'
+    }
+    
+    missing_packages = []
+    
+    for module_name, pip_package in critical_packages.items():
+        try:
+            __import__(module_name)
+            print(f"✓ {module_name} available")
+        except ImportError:
+            print(f"❌ {module_name} missing")
+            missing_packages.append(pip_package)
+    
+    if missing_packages:
+        print(f"\n🔧 Installing missing critical packages...")
+        if install_pip_packages(missing_packages):
+            # Verify installation
+            still_missing = []
+            for module_name, pip_package in critical_packages.items():
+                try:
+                    __import__(module_name)
+                    print(f"✓ {module_name} now available")
+                except ImportError:
+                    still_missing.append(module_name)
+            
+            if still_missing:
+                print(f"❌ Still missing after installation: {', '.join(still_missing)}")
+                return False
+        else:
+            return False
+    
+    print("✅ All critical external dependencies available")
+    return True
+
 def check_builtin_dependencies():
-    """Check for missing built-in Python dependencies."""
+    """Check for missing built-in Python dependencies and attempt to install them."""
     print("\n🔍 Checking built-in dependencies...")
     
     # Import our built-in dependency tester
@@ -64,25 +225,77 @@ def check_builtin_dependencies():
                 print(f"  • {module}: {info['description']}")
                 print(f"    Install: {info['system_package']}")
             
-            print("\n💡 To fix missing built-in dependencies:")
-            if 'tkinter' in missing_critical:
-                print("   sudo apt-get update && sudo apt-get install python3-tk")
-            
-            return False
+            # Attempt to install missing critical dependencies
+            install_success = True
+            for module in missing_critical:
+                info = tester.builtin_dependencies[module]
+                system_package = info['system_package']
+                
+                # Only attempt to install if it's an actual system package
+                if system_package and not system_package.startswith('Built-in'):
+                    if 'python3-tk' in system_package:
+                        if install_system_package('python3-tk'):
+                            # Verify the installation worked
+                            try:
+                                import tkinter
+                                print(f"✅ {module} now available after installation")
+                            except ImportError:
+                                print(f"❌ {module} still not available after installation")
+                                install_success = False
+                        else:
+                            install_success = False
+                            
+            return install_success
         else:
             print("✓ All critical built-in dependencies available")
             return True
             
     except ImportError:
         print("⚠️  Built-in dependency tester not available")
-        # Fallback: just test tkinter manually
-        try:
-            import tkinter
-            print("✓ tkinter available")
+        # Enhanced fallback: test critical built-in modules manually
+        critical_builtins = {
+            'tkinter': 'python3-tk',
+            'uuid': None,
+            'json': None,
+            'asyncio': None,
+            'threading': None,
+            'urllib.parse': None
+        }
+        
+        missing_critical = []
+        for module_name, system_package in critical_builtins.items():
+            try:
+                if '.' in module_name:
+                    # Handle modules like urllib.parse
+                    parent_module = module_name.split('.')[0]
+                    submodule = module_name.split('.')[1]
+                    parent = __import__(parent_module)
+                    getattr(parent, submodule)
+                else:
+                    __import__(module_name)
+                print(f"✓ {module_name} available")
+            except (ImportError, AttributeError):
+                print(f"❌ {module_name} missing")
+                if system_package:
+                    missing_critical.append((module_name, system_package))
+        
+        # Attempt to install missing packages
+        if missing_critical:
+            install_success = True
+            for module_name, system_package in missing_critical:
+                if install_system_package(system_package):
+                    # Verify installation
+                    try:
+                        __import__(module_name)
+                        print(f"✅ {module_name} now available after installation")
+                    except ImportError:
+                        print(f"❌ {module_name} still not available after installation")
+                        install_success = False
+                else:
+                    install_success = False
+            return install_success
+        else:
             return True
-        except ImportError:
-            print("❌ tkinter missing - install python3-tk package")
-            return False
 
 def install_dependencies():
     """Install project dependencies."""
@@ -207,16 +420,25 @@ def main():
     if not check_python_version():
         return 1
     
-    # Check built-in dependencies
-    if not check_builtin_dependencies():
-        print("⚠️  Some built-in dependencies are missing")
-        print("   This may affect GUI functionality")
-        print("   Continuing with setup...")
+    # Test and install built-in dependencies
+    builtin_ok = check_builtin_dependencies()
+    if not builtin_ok:
+        print("⚠️  Some built-in dependencies could not be installed")
+        print("   GUI functionality may be limited")
+        print("   You may need to manually install: sudo apt-get install python3-tk")
     
-    # Install dependencies
-    if not install_dependencies():
-        print("❌ Failed to install dependencies")
-        return 1
+    # Test and install external dependencies
+    external_ok = test_and_install_external_dependencies()
+    if not external_ok:
+        print("❌ Failed to install some critical external dependencies")
+        print("   Trying manual pip install from requirements.txt...")
+        # Fallback to original installation method
+        if not install_dependencies():
+            print("❌ Failed to install dependencies via requirements.txt")
+            return 1
+    
+    # Test and install optional dependencies
+    test_and_install_optional_dependencies()
     
     # Setup Rasa
     if not setup_rasa():
@@ -229,7 +451,17 @@ def main():
     # Show usage examples
     show_usage_examples()
     
-    print("\n✅ Setup complete!")
+    # Final dependency status check
+    print("\n🔍 Final dependency status check...")
+    final_builtin_ok = check_builtin_dependencies()
+    final_external_ok = test_and_install_external_dependencies()
+    
+    if final_builtin_ok and final_external_ok:
+        print("\n✅ Setup complete! All critical dependencies are available.")
+    else:
+        print("\n⚠️  Setup complete but some dependencies may still be missing.")
+        print("    Core functionality should still work.")
+    
     print("\nTo get started:")
     print("  python rasa_bot/chatbot_integration.py")
     
