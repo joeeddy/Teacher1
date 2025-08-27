@@ -1,0 +1,86 @@
+🔍 Teacher1 Comprehensive Dependency Check
+============================================================
+🐍 Python 3.12.3: Rasa 3.6.0+ requires Python <3.11
+📋 Found 13 requirements in requirements.txt
+📋 Added tkinter (GUI dependency) to check list
+
+📦 Checking Package Dependencies:
+----------------------------------------
+❌ numpy: No module named 'numpy'
+❌ matplotlib: No module named 'matplotlib'
+✅ speechrecognition
+⚠️  pyaudio: No module named 'pyaudio'
+⚠️  pyttsx3: No module named 'pyttsx3'
+⚠️  rasa: No module named 'rasa'
+⚠️  rasa-sdk: No module named 'rasa_sdk'
+⚠️  tensorflow: No module named 'tensorflow'
+⚠️  spacy: No module named 'spacy'
+❌ websockets: No module named 'websockets'
+❌ flask: No module named 'flask'
+❌ flask-cors: No module named 'flask_cors'
+⚠️  tkinter: No module named 'tkinter'
+
+🏗️  Checking Project Modules:
+----------------------------------------
+❌ big_text_gui
+❌ fractal_modules
+❌ text_to_speech
+✅ speech_recognition
+❌ websocket_communication
+
+⚠️  Compatibility Issues:
+----------------------------------------
+• Rasa requires Python <3.11, but Python 3.11+ is installed
+• TensorFlow may have compatibility issues with Python 3.12+
+
+📊 Summary:
+============================================================
+Total dependencies: 13
+Available packages: 1
+Critical missing: 13
+Optional missing: 3
+
+❌ Critical dependencies missing:
+   • numpy
+   • matplotlib
+   • rasa
+   • rasa-sdk
+   • tensorflow
+   • spacy
+   • websockets
+   • flask
+   • flask-cors
+   • big_text_gui
+   • fractal_modules
+   • text_to_speech
+   • websocket_communication
+
+⚠️  Optional dependencies missing:
+   • pyaudio
+   • pyttsx3
+   • tkinter
+
+🚀 Installation Plan:
+============================================================
+1. Install basic packages:
+   pip install numpy matplotlib spacy websockets flask flask-cors big_text_gui fractal_modules text_to_speech websocket_communication pyaudio pyttsx3 tkinter
+
+2. System packages that may need to be installed:
+   # On Ubuntu/Debian:
+   sudo apt-get install python3-tk
+   # On CentOS/RHEL:
+   sudo yum install tkinter
+
+3. Install AI/ML packages (may require specific Python version):
+   # rasa requires Python <3.11
+   pip install rasa
+   pip install rasa-sdk
+   pip install tensorflow
+
+⚠️  Note: Compatibility issues detected:
+   • Rasa requires Python <3.11, but Python 3.11+ is installed
+   • TensorFlow may have compatibility issues with Python 3.12+
+
+   Consider using a Python version manager (e.g., pyenv) to install Python 3.10
+
+❌ Critical dependencies are missing. Please install them before running the project.

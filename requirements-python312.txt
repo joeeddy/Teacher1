@@ -1,0 +1,48 @@
+# Teacher1 Project Dependencies - Python 3.12 Compatible
+# Updated requirements with version constraints for Python 3.12 compatibility
+
+# Core dependencies for Teacher1 project
+numpy>=1.21.0,<2.0.0
+matplotlib>=3.5.0,<4.0.0
+
+# GUI dependencies
+# Note: tkinter should be built-in with Python, but may need system installation:
+# Ubuntu/Debian: sudo apt-get install python3-tk
+# CentOS/RHEL: sudo yum install tkinter
+
+# Speech and audio dependencies
+SpeechRecognition>=3.8.0
+# Note: pyaudio may require system dependencies:
+# Ubuntu/Debian: sudo apt-get install portaudio19-dev
+# macOS: brew install portaudio
+pyaudio>=0.2.11
+pyttsx3>=2.90
+
+# WebSocket communication dependencies
+websockets>=10.0,<13.0
+
+# Web interface dependencies
+flask>=2.0.0,<3.0.0
+flask-cors>=3.0.0,<5.0.0
+
+# AI/ML dependencies - Python 3.12 compatible versions
+# Note: These are more recent versions that support Python 3.12
+tensorflow>=2.15.0  # Updated for Python 3.12 support
+spacy>=3.7.0,<4.0.0  # Updated for Python 3.12 support
+
+# Rasa alternative for Python 3.12
+# Note: Rasa >=3.6.0 requires Python <3.11
+# For Python 3.12, consider these alternatives:
+# - Use Python 3.10 in a virtual environment
+# - Use containerized deployment with Python 3.10
+# - Wait for Rasa Python 3.12 support
+# - Use alternative chatbot frameworks
+
+# Uncomment these if using Python 3.10:
+# rasa>=3.6.0,<4.0.0
+# rasa-sdk>=3.6.0,<4.0.0
+
+# Development and testing dependencies (optional)
+pytest>=7.0.0  # For testing
+black>=22.0.0  # For code formatting
+flake8>=5.0.0  # For linting
