@@ -46,6 +46,44 @@ def check_python_version():
     print("✓ Python version compatible for core dependencies")
     return True
 
+def check_builtin_dependencies():
+    """Check for missing built-in Python dependencies."""
+    print("\n🔍 Checking built-in dependencies...")
+    
+    # Import our built-in dependency tester
+    try:
+        from test_builtin_dependencies import BuiltinDependencyTester
+        tester = BuiltinDependencyTester()
+        results = tester.test_all_builtin_dependencies()
+        missing_critical = tester.get_missing_critical_dependencies(results)
+        
+        if missing_critical:
+            print("❌ Missing critical built-in dependencies:")
+            for module in missing_critical:
+                info = tester.builtin_dependencies[module]
+                print(f"  • {module}: {info['description']}")
+                print(f"    Install: {info['system_package']}")
+            
+            print("\n💡 To fix missing built-in dependencies:")
+            if 'tkinter' in missing_critical:
+                print("   sudo apt-get update && sudo apt-get install python3-tk")
+            
+            return False
+        else:
+            print("✓ All critical built-in dependencies available")
+            return True
+            
+    except ImportError:
+        print("⚠️  Built-in dependency tester not available")
+        # Fallback: just test tkinter manually
+        try:
+            import tkinter
+            print("✓ tkinter available")
+            return True
+        except ImportError:
+            print("❌ tkinter missing - install python3-tk package")
+            return False
+
 def install_dependencies():
     """Install project dependencies."""
     print("\n📦 Installing dependencies...")
@@ -168,6 +206,12 @@ def main():
     # Check Python version
     if not check_python_version():
         return 1
+    
+    # Check built-in dependencies
+    if not check_builtin_dependencies():
+        print("⚠️  Some built-in dependencies are missing")
+        print("   This may affect GUI functionality")
+        print("   Continuing with setup...")
     
     # Install dependencies
     if not install_dependencies():

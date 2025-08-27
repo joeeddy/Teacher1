@@ -60,12 +60,14 @@ def test_optional_dependencies():
     except ImportError as e:
         print(f"? SpeechRecognition: {e}")
     
-    # Test GUI dependencies
+    # Test GUI dependencies (built-in but may be missing)
     try:
         import tkinter
         print(f"✓ Tkinter available")
     except ImportError as e:
-        print(f"? Tkinter: {e} (May fail in headless containers)")
+        print(f"❌ Tkinter: {e} (BUILT-IN MODULE - install python3-tk)")
+        print(f"   This is a critical built-in dependency, not an optional one")
+        print(f"   Install with: sudo apt-get install python3-tk")
 
 def test_ai_dependencies():
     """Test AI/ML dependencies"""
