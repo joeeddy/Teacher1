@@ -52,7 +52,7 @@ def demo_speech_recognition():
     try:
         import speech_recognition as sr
         print("✓ Speech recognition library is available!")
-        print("  To test speech: python speech_recognition.py")
+        print("  To test speech: python speech_recognition_demo.py")
         return True
     except ImportError:
         print("❌ Speech recognition not available. Install: pip install speechrecognition pyaudio")
@@ -114,7 +114,7 @@ Teacher1/
 ├── setup.py                  # Automated setup script
 ├── demo.py                   # This demo script
 ├── big_text_gui.py          # GUI for early learners
-├── speech_recognition.py     # Voice input
+├── speech_recognition_demo.py     # Voice input
 ├── text_to_speech.py        # Audio output
 ├── fractal_emergent_ai.py  # Advanced AI
 ├── fractal_modules.py       # AI components

@@ -34,7 +34,7 @@ except ImportError:
     print("Text-to-speech not available. Install pyttsx3 if needed.")
 
 try:
-    from speech_recognition import listen_and_print
+    from speech_recognition_demo import listen_and_print
     SR_AVAILABLE = True
 except ImportError:
     SR_AVAILABLE = False

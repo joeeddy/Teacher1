@@ -383,7 +383,7 @@ def show_usage_examples():
     examples = [
         ("GUI Application", "python big_text_gui.py"),
         ("Text-to-Speech Demo", "python text_to_speech.py"),
-        ("Speech Recognition Demo", "python speech_recognition.py"),
+        ("Speech Recognition Demo", "python speech_recognition_demo.py"),
         ("Fractal AI System", "python fractal_emergent_ai.py"),
         ("Chatbot (with TTS)", "python rasa_bot/chatbot_integration.py"),
         ("Chatbot (text only)", "python rasa_bot/chatbot_integration.py --no-tts"),
