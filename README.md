@@ -85,9 +85,16 @@ Then open your browser to: http://localhost:5000
 
 Features:
 - Interactive chat with embedded educational content
+- **Dual Chatbot Support**: Switch between Personalized Education and HuggingFace Conversational AI
 - Mobile and tablet optimized
 - Secure iframe integration with trusted educational sites
 - Accessibility support for all users
+
+**API Endpoints:**
+- `POST /start_session` - Start personalized educational session
+- `POST /start_huggingface_session` - Start conversational AI session
+- `POST /chat` - Send messages (supports `chatbot_type` parameter)
+- `GET /health` - System status including chatbot availability
 
 #### GUI Application
 ```bash
@@ -114,6 +121,32 @@ python fractal_emergent_ai.py
 # Interactive chatbot with educational features
 python personalized_chatbot.py
 ```
+
+#### HuggingFace BlenderBot Chatbot
+```bash
+# Install HuggingFace dependencies (optional)
+pip install transformers torch
+
+# Test HuggingFace chatbot (runs in fallback mode without transformers)
+python huggingface_chatbot.py
+
+# Test HuggingFace WebSocket integration
+python huggingface_websocket_chatbot.py --duration 30
+
+# Test multi-chatbot communication (Fractal AI ↔ HuggingFace ↔ Personalized)
+python test_multi_chatbot_communication.py
+```
+
+**Features:**
+- State-of-the-art conversational AI using Facebook's BlenderBot model
+- Graceful fallback to simple responses when transformers not installed
+- WebSocket integration for real-time communication with other AI systems
+- Educational content filtering and age-appropriate responses
+- Compatible interface with existing Teacher1 chatbot system
+
+**Requirements:**
+- Optional: `transformers` and `torch` for full AI capabilities
+- Fallback mode works without additional dependencies
 
 #### WebSocket Communication System
 ```bash
