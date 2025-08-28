@@ -45,9 +45,6 @@ The Teacher1 repository has been thoroughly tested and **is fully functional** w
 | pyttsx3 | ✅ Available | Text-to-speech base | Install espeak: `sudo apt-get install espeak espeak-data` |
 | speech_recognition | ✅ Available | Speech input processing | Working for file-based input |
 | pyaudio | ❌ Missing | Audio input/output | `sudo apt-get install portaudio19-dev; pip install pyaudio` |
-| rasa | ❌ Missing | Advanced chatbot | Use Python 3.8-3.11 environment |
-| tensorflow | ❌ Missing | AI/ML framework | Required for Rasa |
-| spacy | ❌ Missing | NLP processing | Required for Rasa |
 
 ## 🧠 Core Teacher1 Modules (All Working)
 
@@ -97,12 +94,7 @@ The Teacher1 repository has been thoroughly tested and **is fully functional** w
 - **Workaround**: Text-based interaction works fully
 - **Fix**: `sudo apt-get install espeak espeak-data`
 
-### 2. Advanced Chatbot (Rasa)
-- **Issue**: Rasa requires Python 3.8-3.11 (current: 3.12.3)
-- **Workaround**: Fallback chatbot provides educational responses
-- **Fix**: Use Python 3.8-3.11 environment for full Rasa features
-
-### 3. Audio Input
+### 2. Audio Input
 - **Issue**: PyAudio needs system audio libraries
 - **Workaround**: File-based audio processing works
 - **Fix**: `sudo apt-get install portaudio19-dev; pip install pyaudio`
@@ -119,7 +111,6 @@ The repository is **ready for educational use** with current setup:
 ### For Enhanced Features
 1. **Install espeak**: `sudo apt-get install espeak espeak-data` (for full TTS)
 2. **Audio support**: `sudo apt-get install portaudio19-dev` (for microphone input)
-3. **Advanced AI**: Use Python 3.8-3.11 environment (for Rasa chatbot)
 
 ## 🏆 Conclusion
 

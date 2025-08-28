@@ -9,7 +9,6 @@ An interactive educational platform for early learners featuring AI-powered comp
 - **Interactive GUI**: Large text interface designed for early learners
 - **Speech Recognition**: Voice input capabilities for hands-free interaction
 - **Text-to-Speech**: Audio output for enhanced accessibility
-- **Rasa Chatbot**: Conversational AI for educational assistance
 - **WebSocket Communication**: Real-time bidirectional communication between AI systems
 - **Web Interface**: Modern web-based chat interface with embedded content viewer
 
@@ -23,7 +22,7 @@ An interactive educational platform for early learners featuring AI-powered comp
 - Embedded educational content from trusted websites
 
 ### Advanced Features
-- **Bidirectional AI Communication**: Real-time interaction between Fractal AI and Rasa chatbot
+- **Bidirectional AI Communication**: Real-time interaction between AI systems
 - **Turn-taking Protocol**: Intelligent conversation management between AI systems
 - **Educational Context Integration**: AI insights tailored for learning applications
 - **Message Deduplication**: Prevention of communication loops and spam
@@ -47,12 +46,6 @@ An interactive educational platform for early learners featuring AI-powered comp
    pip install -r requirements.txt
    ```
 
-3. **Set up the Rasa chatbot**
-   ```bash
-   cd rasa_bot
-   rasa train
-   cd ..
-   ```
 
 ### Quick Verification
 
@@ -68,15 +61,15 @@ python websocket_demo.py --test
 # Start integrated WebSocket communication  
 python websocket_demo.py --both
 ```
-**Expected:** Both Fractal AI and Rasa should start, establish WebSocket connections, and begin exchanging educational insights.
+**Expected:** AI systems should start, establish WebSocket connections, and begin exchanging educational insights.
 
 **Verify Individual Components:**
 ```bash
 # Test Fractal AI visualization
 python fractal_emergent_ai.py --quick
 
-# Test Rasa chatbot
-python rasa_bot/chatbot_integration.py --no-tts
+# Test personalized chatbot
+python personalized_chatbot.py
 ```
 
 If any test fails, see the [Troubleshooting](#troubleshooting) section.
@@ -116,20 +109,10 @@ python speech_recognition.py
 python fractal_emergent_ai.py
 ```
 
-#### Rasa Chatbot
+#### Personalized Chatbot
 ```bash
-# Interactive chatbot with text-to-speech
-python rasa_bot/chatbot_integration.py
-
-# Text-only mode
-python rasa_bot/chatbot_integration.py --no-tts
-
-# With speech recognition
-python rasa_bot/chatbot_integration.py --speech
-
-# Alternative: Rasa shell
-cd rasa_bot
-rasa shell
+# Interactive chatbot with educational features
+python personalized_chatbot.py
 ```
 
 #### WebSocket Communication System
@@ -137,12 +120,12 @@ rasa shell
 # Test bidirectional communication between AI systems
 python websocket_demo.py --test
 
-# Run both Fractal AI and Rasa with WebSocket communication
+# Run both Fractal AI and Chatbot with WebSocket communication
 python websocket_demo.py --both
 
 # Run individual systems with WebSocket enabled
 python fractal_emergent_ai.py --websocket --quick
-python rasa_bot/chatbot_integration.py --websocket --no-tts
+python personalized_chatbot.py
 ```
 
 ## Real-World WebSocket Integration
@@ -161,7 +144,7 @@ python websocket_demo.py --both
 **For production deployment:**
 ```bash
 # Terminal 1: Start with student interaction interface
-python rasa_bot/chatbot_integration.py --websocket
+python personalized_chatbot.py
 
 # Terminal 2: Start AI analysis
 python fractal_emergent_ai.py --websocket
@@ -169,7 +152,7 @@ python fractal_emergent_ai.py --websocket
 
 ### Overview
 
-The Teacher1 platform features **real bidirectional WebSocket communication** between the Fractal AI system and Rasa chatbot. This enables dynamic, real-time AI collaboration for enhanced educational experiences where both systems can initiate conversations, share insights, and provide coordinated responses to students.
+The Teacher1 platform features **real bidirectional WebSocket communication** between AI systems. This enables dynamic, real-time AI collaboration for enhanced educational experiences where systems can initiate conversations, share insights, and provide coordinated responses to students.
 
 ### System Requirements
 
@@ -177,14 +160,11 @@ The Teacher1 platform features **real bidirectional WebSocket communication** be
 ```bash
 # Required for all WebSocket functionality
 pip install numpy>=1.21.0 matplotlib>=3.5.0 websockets>=12.0
-
-# For Rasa chatbot integration
-pip install rasa>=3.6.0 rasa-sdk>=3.6.0 tensorflow>=2.12.0 spacy>=3.4.0
 ```
 
 **Port Configuration:**
 - Fractal AI: Server on port 8765, connects to port 8766
-- Rasa Chatbot: Server on port 8766, connects to port 8765
+- Chatbot: Server on port 8766, connects to port 8765
 - Both ports must be available on localhost
 
 ### Step-by-Step Setup Guide
@@ -197,11 +177,6 @@ cd Teacher1
 
 # Install core dependencies
 pip install -r requirements.txt
-
-# Train the Rasa model (required for real system)
-cd rasa_bot
-rasa train
-cd ..
 ```
 
 #### 2. System Verification
@@ -211,8 +186,8 @@ Test that both AI systems can run independently before enabling WebSocket commun
 # Test Fractal AI (should display visualization)
 python fractal_emergent_ai.py --quick
 
-# Test Rasa chatbot (should start interactive session)
-python rasa_bot/chatbot_integration.py --no-tts
+# Test personalized chatbot (should start interactive session)
+python personalized_chatbot.py
 ```
 
 **Expected Output:** Both systems should start without errors. Exit with Ctrl+C.
@@ -233,7 +208,7 @@ python websocket_demo.py --test
 📊 Communication Statistics:
    - Messages exchanged: 8-15
    - AI responses: 4-8  
-   - Rasa responses: 4-7
+   - Chatbot responses: 4-7
 ✅ Test completed successfully
 ```
 
@@ -251,9 +226,9 @@ python websocket_demo.py --both
 
 🧠 Starting Fractal AI with WebSocket communication...
    Server: localhost:8765
-   Target: localhost:8766 (Rasa chatbot)
+   Target: localhost:8766 (Chatbot)
 
-🤖 Starting Rasa Chatbot with WebSocket communication...
+🤖 Starting Chatbot with WebSocket communication...
    Server: localhost:8766  
    Target: localhost:8765 (Fractal AI)
 
@@ -267,9 +242,9 @@ python websocket_demo.py --both
 Monitor the logs for bidirectional message exchange:
 
 ```
-💬 Fractal AI → Rasa: "High activation patterns detected in learning sequences..."
-💬 Rasa → Fractal AI: "How can we apply this to student engagement?"
-💬 Fractal AI → Rasa: "Pattern analysis suggests visual-spatial learning optimization..."
+💬 Fractal AI → Chatbot: "High activation patterns detected in learning sequences..."
+💬 Chatbot → Fractal AI: "How can we apply this to student engagement?"
+💬 Fractal AI → Chatbot: "Pattern analysis suggests visual-spatial learning optimization..."
 ```
 
 **Communication Statistics:**
@@ -280,7 +255,7 @@ Monitor the logs for bidirectional message exchange:
    Client connection: True
    Last insights: ["High variance patterns emerging - creative phase"]
 
-📊 Rasa Communication Summary:  
+📊 Chatbot Communication Summary:  
    Messages sent: 6
    Messages received: 6
    Active connections: 1
@@ -293,14 +268,14 @@ Monitor the logs for bidirectional message exchange:
 # Terminal 1: Start Fractal AI with WebSocket
 python fractal_emergent_ai.py --websocket --quick
 
-# Terminal 2: Start Rasa with WebSocket  
-python rasa_bot/chatbot_integration.py --websocket --no-tts
+# Terminal 2: Start Chatbot with WebSocket  
+python personalized_chatbot.py --websocket --no-tts
 ```
 
 #### Method 2: Production Integration with Student Interaction
 ```bash
 # Start full system with student chat interface
-python rasa_bot/chatbot_integration.py --websocket
+python personalized_chatbot.py --websocket
 
 # In another terminal, run AI analysis
 python fractal_emergent_ai.py --websocket
@@ -309,13 +284,13 @@ python fractal_emergent_ai.py --websocket
 **Student Interaction Example:**
 ```
 Student: "Why is math so hard?"
-Rasa: "Math can feel challenging, but your brain is amazing at finding patterns!"
+Chatbot: "Math can feel challenging, but your brain is amazing at finding patterns!"
 
-[Behind the scenes: Rasa ↔ Fractal AI communication]
-Rasa → AI: "Student expressing math difficulty. Learning pattern insights?"
-AI → Rasa: "Analysis shows optimal learning with game-based pattern recognition"
+[Behind the scenes: Chatbot ↔ Fractal AI communication]
+Chatbot → AI: "Student expressing math difficulty. Learning pattern insights?"
+AI → Chatbot: "Analysis shows optimal learning with game-based pattern recognition"
 
-Rasa: "Let's try some fun math games that help your brain see cool number patterns!"
+Chatbot: "Let's try some fun math games that help your brain see cool number patterns!"
 ```
 
 ### Troubleshooting Guide
@@ -344,23 +319,9 @@ ModuleNotFoundError: No module named 'websockets'
 ```bash
 # Install missing dependencies
 pip install websockets numpy matplotlib
-
-# For Rasa integration
-pip install rasa rasa-sdk tensorflow spacy
 ```
 
-**3. Rasa Model Not Found**
-```
-No trained Rasa model found
-```
-**Solution:**
-```bash
-cd rasa_bot
-rasa train
-cd ..
-```
-
-**4. Connection Timeouts**
+**3. Connection Timeouts**
 ```
 WebSocket connection failed: ConnectionRefused
 ```
@@ -477,16 +438,6 @@ Teacher1/
 │       │   └── style.css   # Responsive styles and accessibility
 │       └── js/
 │           └── chat.js     # Chat interaction and iframe management
-└── rasa_bot/               # Chatbot directory
-    ├── README.md           # Chatbot-specific documentation
-    ├── config.yml          # Rasa configuration
-    ├── domain.yml          # Bot domain definition
-    ├── chatbot_integration.py  # Integration with Teacher1
-    ├── data/               # Training data
-    │   ├── nlu.yml        # Natural language understanding
-    │   ├── stories.yml    # Conversation flows
-    │   └── rules.yml      # Conversation rules
-    └── models/            # Trained models (generated)
 ```
 
 ## Dependencies
@@ -500,12 +451,6 @@ Teacher1/
 - `speechrecognition` - Voice input processing
 - `pyaudio` - Audio interface
 - `pyttsx3` - Text-to-speech synthesis
-
-### Rasa Chatbot
-- `rasa` - Conversational AI framework
-- `rasa-sdk` - SDK for custom actions
-- `tensorflow` - Machine learning backend
-- `spacy` - Natural language processing
 
 ### WebSocket Communication
 - `websockets` - Bidirectional WebSocket communication between AI systems
@@ -541,7 +486,7 @@ Bot: Here are some excellent math resources from Khan Academy!
 ### Basic Chatbot Interaction
 ```python
 # Start the integrated chatbot
-python rasa_bot/chatbot_integration.py
+python personalized_chatbot.py
 
 # Example conversation:
 # You: Hello
@@ -555,7 +500,7 @@ python rasa_bot/chatbot_integration.py
 **Real-World Example with Student:**
 ```bash
 # Start full integrated system with student interface
-python rasa_bot/chatbot_integration.py --websocket
+python personalized_chatbot.py --websocket
 
 # In another terminal, monitor AI insights
 python fractal_emergent_ai.py --websocket
@@ -564,13 +509,13 @@ python fractal_emergent_ai.py --websocket
 **Example interaction flow:**
 ```
 Student: "Why is math so hard?"
-Rasa: "Math can feel challenging, but your brain is amazing at finding patterns!"
+Chatbot: "Math can feel challenging, but your brain is amazing at finding patterns!"
 
 [Behind-the-scenes AI collaboration]
-Rasa → Fractal AI: "Student expressing math difficulty. What learning patterns show best engagement?"
-Fractal AI → Rasa: "Analysis shows optimal learning with game-based pattern recognition and immediate positive feedback loops."
+Chatbot → Fractal AI: "Student expressing math difficulty. What learning patterns show best engagement?"
+Fractal AI → Chatbot: "Analysis shows optimal learning with game-based pattern recognition and immediate positive feedback loops."
 
-Rasa: "Let's try some fun math games that help your brain see the cool patterns in numbers! Would you like to start with addition patterns?"
+Chatbot: "Let's try some fun math games that help your brain see the cool patterns in numbers! Would you like to start with addition patterns?"
 ```
 
 **Advanced Integration Testing:**
@@ -589,7 +534,7 @@ The platform is designed for integration. For example, you could:
 
 1. Use the GUI to display large text
 2. Use speech recognition for voice input
-3. Process input through the Rasa chatbot
+3. Process input through the chatbot
 4. Use text-to-speech for audio responses
 5. Apply the fractal AI for advanced pattern recognition
 6. Enable WebSocket communication for real-time AI collaboration
@@ -603,7 +548,7 @@ python websocket_demo.py --both
 
 # Individual system deployment
 python fractal_emergent_ai.py --websocket --quick
-python rasa_bot/chatbot_integration.py --websocket --no-tts
+python personalized_chatbot.py --websocket --no-tts
 ```
 
 **Development and Testing:**
@@ -613,7 +558,7 @@ python websocket_demo.py --test
 
 # Individual component testing
 python websocket_demo.py --ai-only
-python websocket_demo.py --rasa-only
+python websocket_demo.py --chatbot-only
 ```
 
 See [Real-World WebSocket Integration](#real-world-websocket-integration) section for complete setup guide and [WEBSOCKET_COMMUNICATION.md](WEBSOCKET_COMMUNICATION.md) for technical documentation.
@@ -622,9 +567,9 @@ See [Real-World WebSocket Integration](#real-world-websocket-integration) sectio
 
 ### Adding New Educational Content
 
-1. **Extend Rasa training data** in `rasa_bot/data/`
-2. **Add new responses** in `rasa_bot/domain.yml`
-3. **Create custom actions** for complex educational logic
+1. **Extend chatbot capabilities** in `personalized_chatbot.py`
+2. **Add new educational responses** to existing chatbot logic
+3. **Create custom functions** for complex educational logic
 4. **Integrate with existing components** for multimedia experiences
 
 ### Customizing the AI System
@@ -638,8 +583,6 @@ The fractal AI system in `fractal_emergent_ai.py` can be extended for:
 
 After modifying training data:
 ```bash
-cd rasa_bot
-rasa train
 ```
 
 ## Troubleshooting
@@ -677,14 +620,8 @@ sudo fuser -k 8765/tcp 8766/tcp
 - Check that no antivirus software is blocking WebSocket connections
 
 **Silent Communication (Connected but No Messages):**
-- Verify Rasa model is trained: `cd rasa_bot && rasa train`
 - Check AI analysis is generating insights (requires state changes)
 - Ensure conversation_state is 'idle' between systems
-
-### Rasa Training Issues
-- Verify YAML syntax in training files
-- Ensure sufficient training examples for each intent
-- Check TensorFlow compatibility
 
 ### Audio Issues
 - Test microphone permissions
@@ -706,5 +643,4 @@ This project is open source. Please check the repository for license details.
 
 For issues and questions:
 1. Check the troubleshooting section
-2. Review the Rasa documentation: https://rasa.com/docs/
-3. Open an issue on the GitHub repository
+2. Open an issue on the GitHub repository
