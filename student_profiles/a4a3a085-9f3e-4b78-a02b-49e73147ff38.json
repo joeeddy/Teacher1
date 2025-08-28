@@ -59,9 +59,18 @@
       "total_score": 0,
       "subjects_covered": [],
       "engagement_level": "neutral"
+    },
+    {
+      "session_id": "fb3dc226-64e4-4053-ab7a-d222dc4379f4",
+      "start_time": "2025-08-28T17:30:36.691834",
+      "end_time": "2025-08-28T17:30:36.692160",
+      "activities": [],
+      "total_score": 0,
+      "subjects_covered": [],
+      "engagement_level": "neutral"
     }
   ],
-  "last_active": "2025-08-28T14:58:42.023377",
+  "last_active": "2025-08-28T17:30:36.691837",
   "preferences": {
     "favorite_subject": null,
     "difficulty_preference": "adaptive",

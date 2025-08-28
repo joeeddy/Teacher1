@@ -95,16 +95,6 @@ def run_personalized_chatbot():
     except ImportError as e:
         print(f"❌ Error: Could not import personalized chatbot: {e}")
         print("   Please ensure the personalized_chatbot.py module is available")
-                enable_websocket=True
-            ))
-            
-        except KeyboardInterrupt:
-            print("\n⏹️  Stopping Rasa chatbot...")
-            chatbot.stop_websocket_communication()
-            
-    except ImportError as e:
-        print(f"❌ Error importing Rasa chatbot: {e}")
-        print("   Rasa may not be installed or configured")
 
 
 async def run_both_systems():
