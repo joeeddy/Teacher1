@@ -18,3 +18,7 @@ websockets>=15.0
 # Web interface dependencies
 flask>=3.1.0
 flask-cors>=6.0.0
+
+# HuggingFace transformers for BlenderBot chatbot
+transformers>=4.21.0
+torch>=2.0.0

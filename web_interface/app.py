@@ -31,6 +31,14 @@ try:
 except ImportError:
     print("Warning: Personalized chatbot not available. Web interface will run in demo mode.")
 
+# Import HuggingFace chatbot
+HUGGINGFACE_CHATBOT_AVAILABLE = False
+try:
+    from huggingface_chatbot import HuggingFaceBlenderBotChatbot
+    HUGGINGFACE_CHATBOT_AVAILABLE = True
+except ImportError:
+    print("Warning: HuggingFace chatbot not available. Install with: pip install transformers torch")
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -50,11 +58,12 @@ class Teacher1WebInterface:
         # Enable CORS for development
         CORS(self.app)
         
-        # Initialize chatbot if available
+        # Initialize chatbots if available
         self.chatbot = None
         self.personalized_chatbot = None
+        self.huggingface_chatbot = None
         
-        # Initialize personalized chatbot as primary option
+        # Initialize personalized chatbot as primary educational option
         if PERSONALIZED_CHATBOT_AVAILABLE:
             try:
                 self.personalized_chatbot = PersonalizedKindergartenChatbot()
@@ -62,6 +71,15 @@ class Teacher1WebInterface:
             except Exception as e:
                 logger.error(f"Failed to initialize personalized chatbot: {e}")
                 self.personalized_chatbot = None
+        
+        # Initialize HuggingFace chatbot as conversational option
+        if HUGGINGFACE_CHATBOT_AVAILABLE:
+            try:
+                self.huggingface_chatbot = HuggingFaceBlenderBotChatbot()
+                logger.info("HuggingFace chatbot initialized successfully")
+            except Exception as e:
+                logger.error(f"Failed to initialize HuggingFace chatbot: {e}")
+                self.huggingface_chatbot = None
         
         # Session storage for student tracking
         self.active_sessions = {}  # session_id -> student_name
@@ -94,12 +112,13 @@ class Teacher1WebInterface:
                 if len(user_message) > 500:
                     return jsonify({'error': 'Message too long (max 500 characters)'}), 400
                 
-                # Get session ID from request
+                # Get session ID and chatbot type from request
                 session_id = data.get('session_id', 'default')
                 student_name = data.get('student_name')
+                chatbot_type = data.get('chatbot_type', 'personalized')  # 'personalized' or 'huggingface'
                 
                 # Process the message
-                response = self.process_message(user_message, session_id, student_name)
+                response = self.process_message(user_message, session_id, student_name, chatbot_type)
                 return jsonify(response)
                 
             except Exception as e:
@@ -141,6 +160,44 @@ class Teacher1WebInterface:
             except Exception as e:
                 logger.error(f"Error starting session: {e}")
                 return jsonify({'error': 'Failed to start session'}), 500
+        
+        @self.app.route('/start_huggingface_session', methods=['POST'])
+        def start_huggingface_session():
+            """Start a new HuggingFace conversational session"""
+            try:
+                data = request.get_json()
+                if not data or 'student_name' not in data:
+                    return jsonify({'error': 'Student name required'}), 400
+                
+                student_name = data['student_name'].strip()
+                if not student_name:
+                    return jsonify({'error': 'Student name cannot be empty'}), 400
+                
+                session_id = data.get('session_id', 'default')
+                
+                if self.huggingface_chatbot:
+                    greeting = self.huggingface_chatbot.start_session(student_name)
+                    self.active_sessions[session_id] = student_name
+                    
+                    return jsonify({
+                        'message': greeting,
+                        'session_started': True,
+                        'student_name': student_name,
+                        'session_id': session_id,
+                        'chatbot_type': 'huggingface'
+                    })
+                else:
+                    return jsonify({
+                        'message': f"Hi {student_name}! I'm your AI conversation partner. What would you like to chat about?",
+                        'session_started': True,
+                        'student_name': student_name,
+                        'session_id': session_id,
+                        'chatbot_type': 'huggingface'
+                    })
+                    
+            except Exception as e:
+                logger.error(f"Error starting HuggingFace session: {e}")
+                return jsonify({'error': 'Failed to start HuggingFace session'}), 500
         
         @self.app.route('/end_session', methods=['POST'])
         def end_session():
@@ -187,8 +244,10 @@ class Teacher1WebInterface:
             return jsonify({
                 'status': 'healthy',
                 'personalized_chatbot_available': PERSONALIZED_CHATBOT_AVAILABLE,
+                'huggingface_chatbot_available': HUGGINGFACE_CHATBOT_AVAILABLE,
+                'huggingface_model_loaded': self.huggingface_chatbot.is_model_available() if self.huggingface_chatbot else False,
                 'active_sessions': len(self.active_sessions),
-                'version': '1.0.0'
+                'version': '1.0.1'
             })
     
     def setup_security_headers(self):
@@ -213,20 +272,48 @@ class Teacher1WebInterface:
             
             return response
     
-    def process_message(self, message: str, session_id: str = 'default', student_name: str = None) -> Dict[str, Any]:
+    def process_message(self, message: str, session_id: str = 'default', student_name: str = None, chatbot_type: str = 'personalized') -> Dict[str, Any]:
         """Process user message and return response with optional embedded content"""
         
         # Check for URL-related intents
         embed_info = self.check_for_embed_intent(message)
         
-        # Use personalized chatbot if available and session is active
-        if PERSONALIZED_CHATBOT_AVAILABLE and self.personalized_chatbot and session_id in self.active_sessions:
+        # Choose chatbot based on type preference
+        if chatbot_type == 'huggingface' and HUGGINGFACE_CHATBOT_AVAILABLE and self.huggingface_chatbot:
+            # Use HuggingFace BlenderBot for conversational AI
+            try:
+                bot_response, metadata = self.huggingface_chatbot.get_response(message)
+                
+                response = {
+                    'message': bot_response,
+                    'timestamp': self.get_timestamp(),
+                    'chatbot_type': 'huggingface',
+                    'personalized': False
+                }
+                
+                # Add metadata if available
+                if metadata:
+                    response.update(metadata)
+                
+            except Exception as e:
+                logger.error(f"HuggingFace chatbot error: {e}")
+                bot_response = self.get_fallback_response(message)
+                response = {
+                    'message': bot_response,
+                    'timestamp': self.get_timestamp(),
+                    'chatbot_type': 'fallback',
+                    'personalized': False
+                }
+        
+        elif PERSONALIZED_CHATBOT_AVAILABLE and self.personalized_chatbot and session_id in self.active_sessions:
+            # Use personalized chatbot if available and session is active
             try:
                 bot_response, metadata = self.personalized_chatbot.get_response(message)
                 
                 response = {
                     'message': bot_response,
                     'timestamp': self.get_timestamp(),
+                    'chatbot_type': 'personalized',
                     'personalized': True
                 }
                 
@@ -240,6 +327,7 @@ class Teacher1WebInterface:
                 response = {
                     'message': bot_response,
                     'timestamp': self.get_timestamp(),
+                    'chatbot_type': 'fallback',
                     'personalized': False
                 }
         else:
@@ -248,6 +336,7 @@ class Teacher1WebInterface:
             response = {
                 'message': bot_response,
                 'timestamp': self.get_timestamp(),
+                'chatbot_type': 'fallback',
                 'personalized': False
             }
         
