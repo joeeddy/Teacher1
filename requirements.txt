@@ -10,13 +10,7 @@ SpeechRecognition>=3.10.0
 pyttsx3>=2.90
 # pyaudio  # Often requires system audio libraries: sudo apt-get install portaudio19-dev python3-dev
 
-# Rasa chatbot framework - NOTE: Limited Python 3.12+ support
-# For full Rasa compatibility, use Python 3.8-3.11 environment
-# Uncomment below if using compatible Python version:
-# rasa>=3.6.0
-# rasa-sdk>=3.6.0
-# tensorflow>=2.13.0
-# spacy>=3.7.0
+
 
 # WebSocket communication dependencies
 websockets>=15.0

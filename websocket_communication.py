@@ -3,13 +3,13 @@ WebSocket Communication Module for Teacher1
 ==========================================
 
 This module provides bidirectional WebSocket communication capabilities between
-the Fractal AI system and the Rasa chatbot. It implements structured JSON messaging,
+AI components in the Teacher1 system. It implements structured JSON messaging,
 turn-taking, message tracking, and deduplication.
 
 Message Format:
 {
     "message_id": "unique_id",
-    "sender": "fractal_ai|rasa_bot", 
+    "sender": "fractal_ai|chatbot|other_component", 
     "type": "question|answer|ack",
     "content": "plain text message",
     "in_reply_to": "message_id_being_replied_to",
@@ -43,7 +43,7 @@ class WebSocketCommunicator:
         Initialize WebSocket communicator.
         
         Args:
-            name: Identifier for this communicator (e.g., "fractal_ai", "rasa_bot")
+            name: Identifier for this communicator (e.g., "fractal_ai", "chatbot")
             server_port: Port to run WebSocket server on
             target_host: Host of the target WebSocket server
             target_port: Port of the target WebSocket server
@@ -369,60 +369,60 @@ class WebSocketCommunicator:
         }
 
 
-async def create_communicator_pair(ai_port: int = 8765, rasa_port: int = 8766):
+async def create_communicator_pair(ai_port: int = 8765, chatbot_port: int = 8766):
     """
     Helper function to create a pair of communicators for testing.
     
     Args:
         ai_port: Port for Fractal AI WebSocket server
-        rasa_port: Port for Rasa WebSocket server
+        chatbot_port: Port for Chatbot WebSocket server
         
     Returns:
-        Tuple of (ai_communicator, rasa_communicator)
+        Tuple of (ai_communicator, chatbot_communicator)
     """
     ai_comm = WebSocketCommunicator(
         name="fractal_ai",
         server_port=ai_port,
         target_host="localhost",
-        target_port=rasa_port
+        target_port=chatbot_port
     )
     
-    rasa_comm = WebSocketCommunicator(
-        name="rasa_bot",
-        server_port=rasa_port,
+    chatbot_comm = WebSocketCommunicator(
+        name="chatbot",
+        server_port=chatbot_port,
         target_host="localhost",
         target_port=ai_port
     )
     
-    return ai_comm, rasa_comm
+    return ai_comm, chatbot_comm
 
 
 if __name__ == "__main__":
     # Example usage
     async def test_communication():
         """Test the WebSocket communication system."""
-        ai_comm, rasa_comm = await create_communicator_pair()
+        ai_comm, chatbot_comm = await create_communicator_pair()
         
         # Set up simple handlers for testing
         async def ai_question_handler(message):
             return f"AI processed: {message['content']}"
         
-        async def rasa_question_handler(message):
-            return f"Rasa processed: {message['content']}"
+        async def chatbot_question_handler(message):
+            return f"Chatbot processed: {message['content']}"
         
         ai_comm.on_question_received = ai_question_handler
-        rasa_comm.on_question_received = rasa_question_handler
+        chatbot_comm.on_question_received = chatbot_question_handler
         
         # Start servers
         await ai_comm.start_server()
-        await rasa_comm.start_server()
+        await chatbot_comm.start_server()
         
         # Give servers time to start
         await asyncio.sleep(1)
         
         # Connect as clients
         await ai_comm.connect_as_client()
-        await rasa_comm.connect_as_client()
+        await chatbot_comm.connect_as_client()
         
         # Give connections time to establish
         await asyncio.sleep(1)
@@ -431,16 +431,16 @@ if __name__ == "__main__":
         await ai_comm.send_question("Hello from Fractal AI!")
         await asyncio.sleep(2)
         
-        await rasa_comm.send_question("Hello from Rasa!")
+        await chatbot_comm.send_question("Hello from Chatbot!")
         await asyncio.sleep(2)
         
         # Print stats
         print("AI Stats:", ai_comm.get_stats())
-        print("Rasa Stats:", rasa_comm.get_stats())
+        print("Chatbot Stats:", chatbot_comm.get_stats())
         
         # Cleanup
         await ai_comm.stop()
-        await rasa_comm.stop()
+        await chatbot_comm.stop()
     
     # Run the test
     asyncio.run(test_communication())
