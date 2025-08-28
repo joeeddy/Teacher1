@@ -297,53 +297,16 @@ def install_dependencies():
             print(f"  ✗ Some core dependencies missing: {e}")
             return False
             
-        print("\n⚠️  Rasa installation requires Python 3.8-3.11 compatibility")
-        print("   Current Python 3.13.5 may not support rasa>=3.6.0")
-        print("   Please use Python 3.10 environment for full Rasa support")
+        print("\n⚠️  For audio input features, install PyAudio dependencies:")
+        print("   sudo apt-get install portaudio19-dev python3-dev")
+        print("   pip install pyaudio")
         return True
     else:
         # Try normal pip install
         result = run_command("pip install -r requirements.txt")
         return result is not None
 
-def setup_rasa():
-    """Set up and train the Rasa model."""
-    print("\n🤖 Setting up Rasa chatbot...")
-    
-    rasa_dir = Path("rasa_bot")
-    if not rasa_dir.exists():
-        print("Error: rasa_bot directory not found")
-        return False
-    
-    # Check if Rasa is available
-    try:
-        import rasa
-        print(f"Rasa {rasa.__version__} is available")
-    except ImportError:
-        import sys
-        version = sys.version_info
-        print("⚠️  Rasa is not installed in current environment")
-        if version.major == 3 and version.minor >= 12:
-            print(f"   This is expected with Python {version.major}.{version.minor}.{version.micro}")
-            print("   Rasa currently supports Python 3.8-3.11")
-            print("   💡 Solutions:")
-            print("   1. Use Python 3.8-3.11 environment (recommended)")
-            print("   2. Wait for Rasa updates supporting Python 3.12+")
-            print("   3. Use core Teacher1 functionality (works without Rasa)")
-        else:
-            print("   Install Rasa with: pip install rasa>=3.6.0 rasa-sdk>=3.6.0")
-        return False
-    
-    # Train the Rasa model
-    print("Training Rasa model...")
-    result = run_command("rasa train", cwd=str(rasa_dir))
-    
-    if result:
-        print("Rasa model trained successfully! ✓")
-        return True
-    else:
-        print("Failed to train Rasa model")
-        return False
+
 
 def test_components():
     """Test individual components."""
@@ -385,9 +348,8 @@ def show_usage_examples():
         ("Text-to-Speech Demo", "python text_to_speech.py"),
         ("Speech Recognition Demo", "python speech_recognition.py"),
         ("Fractal AI System", "python fractal_emergent_ai.py"),
-        ("Chatbot (with TTS)", "python rasa_bot/chatbot_integration.py"),
-        ("Chatbot (text only)", "python rasa_bot/chatbot_integration.py --no-tts"),
-        ("Rasa Shell", "cd rasa_bot && rasa shell"),
+        ("Personalized Chatbot", "python personalized_chatbot.py"),
+        ("WebSocket Demo", "python websocket_demo.py"),
     ]
     
     for name, command in examples:
@@ -423,11 +385,6 @@ def main():
     # Test and install optional dependencies
     test_and_install_optional_dependencies()
     
-    # Setup Rasa
-    if not setup_rasa():
-        print("❌ Failed to setup Rasa")
-        print("Note: You can manually train later with: cd rasa_bot && rasa train")
-    
     # Test components
     test_components()
     
@@ -446,7 +403,9 @@ def main():
         print("    Core functionality should still work.")
     
     print("\nTo get started:")
-    print("  python rasa_bot/chatbot_integration.py")
+    print("  python text_to_speech.py")
+    print("  python fractal_emergent_ai.py")
+    print("  python websocket_demo.py")
     
     return 0
 

@@ -4,7 +4,7 @@ WebSocket Communication Test for Teacher1
 =========================================
 
 This script tests the bidirectional WebSocket communication between 
-the Fractal AI system and the Rasa chatbot.
+the Fractal AI system and chatbot components.
 """
 
 import asyncio
@@ -48,7 +48,7 @@ class MockFractalAI:
         self.communicator.on_answer_received = self._handle_answer
         
     async def _handle_question(self, message: dict) -> str:
-        """Handle questions from Rasa."""
+        """Handle questions from chatbot."""
         question = message['content']
         self.communication_log.append(f"Received: {question}")
         
@@ -67,7 +67,7 @@ class MockFractalAI:
         return response
     
     async def _handle_answer(self, message: dict):
-        """Handle answers from Rasa."""
+        """Handle answers from chatbot."""
         answer = message['content']
         self.communication_log.append(f"Answer: {answer}")
     
@@ -76,11 +76,11 @@ class MockFractalAI:
         await self.communicator.start_server()
         logger.info("Mock Fractal AI server started")
         
-        # Try to connect to Rasa
+        # Try to connect to chatbot
         await asyncio.sleep(2)
         connected = await self.communicator.connect_as_client()
         if connected:
-            logger.info("Mock Fractal AI connected to Rasa")
+            logger.info("Mock Fractal AI connected to chatbot")
         
         return connected
     
@@ -102,12 +102,12 @@ class MockFractalAI:
         await self.communicator.stop()
 
 
-class MockRasaBot:
-    """Mock Rasa chatbot for testing WebSocket communication."""
+class MockChatBot:
+    """Mock chatbot for testing WebSocket communication."""
     
     def __init__(self, port=8766, target_port=8765):
         self.communicator = WebSocketCommunicator(
-            name="rasa_bot_mock",
+            name="chatbot_mock",
             server_port=port,
             target_host="localhost",
             target_port=target_port
@@ -152,15 +152,15 @@ class MockRasaBot:
         self.communication_log.append(f"Answer: {answer}")
     
     async def start(self):
-        """Start the mock Rasa system."""
+        """Start the mock chatbot system."""
         await self.communicator.start_server()
-        logger.info("Mock Rasa server started")
+        logger.info("Mock chatbot server started")
         
         # Try to connect to Fractal AI
         await asyncio.sleep(2)
         connected = await self.communicator.connect_as_client()
         if connected:
-            logger.info("Mock Rasa connected to Fractal AI")
+            logger.info("Mock chatbot connected to Fractal AI")
         
         return connected
     
@@ -199,33 +199,33 @@ async def test_bidirectional_communication(duration: int = 60):
     
     # Create mock systems
     fractal_ai = MockFractalAI()
-    rasa_bot = MockRasaBot()
+    chatbot = MockChatBot()
     
     try:
         # Start both systems
         logger.info("Starting mock systems...")
         await fractal_ai.start()
-        await rasa_bot.start()
+        await chatbot.start()
         
         # Give connections time to establish
         await asyncio.sleep(3)
         
         # Start periodic communication tasks
         ai_task = asyncio.create_task(fractal_ai.send_periodic_insights())
-        rasa_task = asyncio.create_task(rasa_bot.send_educational_questions())
+        chatbot_task = asyncio.create_task(chatbot.send_educational_questions())
         
         # Send initial test messages
         logger.info("Sending initial test messages...")
         
         # Fractal AI asks first question
         await fractal_ai.communicator.send_question(
-            "Hello Rasa! I'm analyzing learning patterns. What educational insights would you like?"
+            "Hello Chatbot! I'm analyzing learning patterns. What educational insights would you like?"
         )
         
         await asyncio.sleep(2)
         
-        # Rasa asks a question back
-        await rasa_bot.communicator.send_question(
+        # Chatbot asks a question back
+        await chatbot.communicator.send_question(
             "Hello Fractal AI! Can you analyze patterns for improving student engagement?"
         )
         
@@ -235,7 +235,7 @@ async def test_bidirectional_communication(duration: int = 60):
         
         # Cancel periodic tasks
         ai_task.cancel()
-        rasa_task.cancel()
+        chatbot_task.cancel()
         
         # Print communication logs
         print("\n" + "="*60)
@@ -245,9 +245,9 @@ async def test_bidirectional_communication(duration: int = 60):
             print(f"{i:2d}. {msg}")
         
         print("\n" + "="*60)
-        print("RASA BOT COMMUNICATION LOG:")
+        print("CHATBOT COMMUNICATION LOG:")
         print("="*60)
-        for i, msg in enumerate(rasa_bot.communication_log, 1):
+        for i, msg in enumerate(chatbot.communication_log, 1):
             print(f"{i:2d}. {msg}")
         
         # Print statistics
@@ -256,14 +256,14 @@ async def test_bidirectional_communication(duration: int = 60):
         print("="*60)
         
         ai_stats = fractal_ai.communicator.get_stats()
-        rasa_stats = rasa_bot.communicator.get_stats()
+        chatbot_stats = chatbot.communicator.get_stats()
         
         print(f"Fractal AI: {len(fractal_ai.communication_log)} messages, {ai_stats['cache_size']} cached")
-        print(f"Rasa Bot: {len(rasa_bot.communication_log)} messages, {rasa_stats['cache_size']} cached")
+        print(f"Chatbot: {len(chatbot.communication_log)} messages, {chatbot_stats['cache_size']} cached")
         print(f"AI Server Clients: {ai_stats['connected_clients']}")
-        print(f"Rasa Server Clients: {rasa_stats['connected_clients']}")
+        print(f"Chatbot Server Clients: {chatbot_stats['connected_clients']}")
         print(f"AI Client Connected: {ai_stats['has_client_connection']}")
-        print(f"Rasa Client Connected: {rasa_stats['has_client_connection']}")
+        print(f"Chatbot Client Connected: {chatbot_stats['has_client_connection']}")
         
         logger.info("Test completed successfully!")
         
@@ -273,7 +273,7 @@ async def test_bidirectional_communication(duration: int = 60):
     finally:
         # Cleanup
         await fractal_ai.stop()
-        await rasa_bot.stop()
+        await chatbot.stop()
         logger.info("Test cleanup completed")
 
 

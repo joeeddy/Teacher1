@@ -56,9 +56,8 @@ sudo apt-get install -y portaudio19-dev python3-tk alsa-utils
 # Install Python dependencies
 pip install -r requirements.txt
 
-# Train Rasa model
-cd rasa_bot
-rasa train
+# Test the personalized chatbot
+python personalized_chatbot.py
 ```
 
 ## Troubleshooting

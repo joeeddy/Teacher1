@@ -1,6 +1,6 @@
 # Teacher1 Setup Instructions
 
-This document provides comprehensive setup instructions for the Teacher1 educational platform, addressing Python version compatibility and Rasa requirements.
+This document provides comprehensive setup instructions for the Teacher1 educational platform, addressing Python version compatibility.
 
 ## Current Environment Status
 
@@ -13,7 +13,7 @@ This document provides comprehensive setup instructions for the Teacher1 educati
 - GUI applications (tkinter)
 
 ⚠️ **Limited Components**:
-- Rasa chatbot (requires Python 3.8-3.11)
+- Speech recognition/TTS (network installation issues)
 - Speech recognition/TTS (network installation issues)
 
 ## Setup Options
@@ -38,59 +38,12 @@ This document provides comprehensive setup instructions for the Teacher1 educati
 - ✅ Web interface development
 - ✅ Mathematical plotting
 - ✅ GUI applications
-- ❌ Rasa chatbot
+- ✅ Personalized chatbot
 - ❌ Speech features (temporarily)
 
-### Option 2: Full Rasa-Compatible Environment (Recommended)
+### Option 2: Docker/DevContainer (Alternative)
 
-**Best for**: Complete Teacher1 functionality including Rasa chatbot
-
-#### Quick Setup:
-```bash
-# Run the automated setup script
-./setup_rasa_environment.sh
-```
-
-#### Manual Setup:
-```bash
-# Create Python 3.10 environment
-conda create -n teacher1-rasa python=3.10 -y
-
-# Activate environment
-conda activate teacher1-rasa
-
-# Install core dependencies
-conda install numpy matplotlib flask -y
-pip install websockets flask-cors
-
-# Install speech dependencies
-pip install SpeechRecognition pyttsx3
-
-# Install Rasa and ML packages
-pip install rasa>=3.6.0 rasa-sdk>=3.6.0 tensorflow>=2.12.0 spacy>=3.4.0
-
-# Setup and test
-python setup.py
-```
-
-#### Usage:
-```bash
-# Always activate the environment first
-conda activate teacher1-rasa
-
-# Run setup and train Rasa
-python setup.py
-cd rasa_bot && rasa train
-
-# Run Teacher1 components
-python big_text_gui.py
-python rasa_bot/chatbot_integration.py
-python websocket_demo.py --both
-```
-
-### Option 3: Docker/DevContainer (Alternative)
-
-Use the provided `.devcontainer` setup which includes Python 3.10 and all dependencies:
+Use the provided `.devcontainer` setup:
 
 ```bash
 # Open in VS Code with Dev Containers extension
@@ -98,12 +51,14 @@ Use the provided `.devcontainer` setup which includes Python 3.10 and all depend
 docker build -f .devcontainer/Dockerfile .
 ```
 
+## Development Workflow
+
 ## Troubleshooting
 
 ### Common Issues:
 
-1. **"Rasa not found"**
-   - Solution: Use Python 3.10 environment (Option 2)
+1. **"Missing dependencies"**
+   - Solution: Run `pip install -r requirements.txt`
 
 2. **"PyAudio installation failed"**
    - Solution: Install system audio libraries first:
@@ -132,13 +87,13 @@ import numpy, matplotlib, websockets, flask
 print('✅ Core dependencies working')
 "
 
-# Test Rasa (if installed)
+# Test core functionality
 python -c "
 try:
-    import rasa
-    print(f'✅ Rasa {rasa.__version__} available')
+    # No additional imports needed
+    print(f'✅ Core functionality available')
 except ImportError:
-    print('⚠️ Rasa not available - use Python 3.10 environment')
+    print('⚠️ Core functionality available - use Python 3.10 environment')
 "
 
 # Test speech (if installed)
@@ -161,8 +116,8 @@ except ImportError:
 
 ### For Full Featured Development:
 ```bash
-# Switch to Rasa environment
-conda activate teacher1-rasa
+# Use current environment
+# Use current environment
 python your_script.py
 ```
 

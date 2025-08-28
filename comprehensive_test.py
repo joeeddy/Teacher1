@@ -100,10 +100,7 @@ class ComprehensiveTestSuite:
         optional_modules = {
             'pyttsx3': 'Text-to-speech functionality',
             'speech_recognition': 'Speech input processing',
-            'pyaudio': 'Audio input/output (system dependent)',
-            'rasa': 'Advanced chatbot framework',
-            'tensorflow': 'AI/ML framework for Rasa',
-            'spacy': 'Natural language processing'
+            'pyaudio': 'Audio input/output (system dependent)'
         }
         
         for module_name, description in optional_modules.items():
@@ -117,10 +114,7 @@ class ComprehensiveTestSuite:
                 recommendations = {
                     'pyttsx3': 'pip install pyttsx3; sudo apt-get install espeak',
                     'speech_recognition': 'pip install SpeechRecognition',
-                    'pyaudio': 'sudo apt-get install portaudio19-dev; pip install pyaudio',
-                    'rasa': 'Use Python 3.8-3.11 for Rasa support',
-                    'tensorflow': 'pip install tensorflow (required for Rasa)',
-                    'spacy': 'pip install spacy (required for Rasa)'
+                    'pyaudio': 'sudo apt-get install portaudio19-dev; pip install pyaudio'
                 }
                 self.log_test('optional_deps', module_name, False, str(e), 
                             recommendations.get(module_name, "Optional - functionality limited without it"))
@@ -277,14 +271,13 @@ class ComprehensiveTestSuite:
         print(f"\n📋 KEY FINDINGS:")
         print(f"• ✅ Built-in dependencies: All critical modules available")
         print(f"• ✅ External dependencies: Core packages (numpy, flask, websockets) working")
-        print(f"• ⚠️ Optional features: TTS needs espeak, Rasa needs Python 3.8-3.11") 
+        print(f"• ⚠️ Optional features: TTS needs espeak for audio output") 
         print(f"• ✅ Core functionality: WebSocket communication, web interface, AI modules working")
         
         print(f"\n🚀 RECOMMENDATIONS:")
         print(f"1. For full TTS: sudo apt-get install espeak espeak-data")
         print(f"2. For audio input: sudo apt-get install portaudio19-dev")  
-        print(f"3. For Rasa chatbot: Use Python 3.8-3.11 environment")
-        print(f"4. Current setup supports: GUI apps, web interface, WebSocket AI, basic TTS")
+        print(f"3. Current setup supports: GUI apps, web interface, WebSocket AI, basic TTS")
         
         print(f"\n✨ CONCLUSION: Repository is functional with expected limitations documented")
 
