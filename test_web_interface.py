@@ -80,7 +80,7 @@ class TestWebInterface(unittest.TestCase):
         """Test that index page loads correctly"""
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Teacher1 Learning Assistant', response.data)
+        self.assertIn(b'Teacher1 Kindergarten Learning Assistant', response.data)
         self.assertIn(b'Educational Content', response.data)
     
     def test_health_endpoint(self):
@@ -90,7 +90,7 @@ class TestWebInterface(unittest.TestCase):
         
         data = json.loads(response.data)
         self.assertEqual(data['status'], 'healthy')
-        self.assertIn('chatbot_available', data)
+        self.assertIn('personalized_chatbot_available', data)
         self.assertIn('version', data)
     
     def test_chat_endpoint_basic(self):
