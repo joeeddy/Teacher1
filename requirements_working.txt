@@ -1,0 +1,17 @@
+# Working dependencies for Teacher1 project - Python 3.12+ compatible
+# These dependencies have been tested and confirmed working
+
+# Core dependencies (required)
+numpy>=2.3.0
+matplotlib>=3.10.0
+websockets>=15.0
+flask>=3.1.0
+flask-cors>=6.0.0
+
+# Speech dependencies (optional but working)
+SpeechRecognition>=3.10.0
+pyttsx3>=2.90
+
+# System packages needed (install with apt/yum):
+# python3-tk (for GUI features)
+# portaudio19-dev python3-dev (for PyAudio - optional audio input)

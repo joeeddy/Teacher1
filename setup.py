@@ -41,9 +41,12 @@ def check_python_version():
     # Note about Rasa compatibility
     if version.major == 3 and version.minor >= 12:
         print("⚠️  Note: Python 3.12+ may have limited Rasa compatibility")
-        print("   Current environment uses Python 3.13.5 via conda")
-        print("   Core dependencies will be installed, Rasa setup may require separate handling")
-    print("✓ Python version compatible for core dependencies")
+        print("   For full Rasa support, consider using Python 3.8-3.11")
+        print("   Core Teacher1 functionality works with current Python version")
+    elif version.major == 3 and 8 <= version.minor <= 11:
+        print("✅ Python version is fully compatible with all features including Rasa")
+    else:
+        print("✓ Python version compatible for core dependencies")
     return True
 
 def install_system_package(package_name):
@@ -104,11 +107,19 @@ def test_and_install_optional_dependencies():
     if missing_packages:
         print(f"\n🔧 Attempting to install optional packages...")
         print("   Note: Some may fail due to system requirements (audio libraries, etc.)")
+        print("   💡 For text-to-speech: sudo apt-get install espeak espeak-data")
         
         # Try to install each package individually for better error handling
         for package in missing_packages:
             try:
                 module_name = package.split('>=')[0].replace('-', '_').lower()
+                
+                # Special handling for PyAudio which often has installation issues
+                if module_name == 'pyaudio':
+                    print(f"🔧 Attempting to install {package}...")
+                    print(f"   Note: PyAudio requires system audio libraries (portaudio19-dev)")
+                    print(f"   If installation fails, audio features will be limited but other functionality works")
+                    
                 result = run_command(f"pip install {package}", check=False)
                 if result and result.returncode == 0:
                     try:
@@ -116,55 +127,21 @@ def test_and_install_optional_dependencies():
                         print(f"✅ {module_name} successfully installed and available")
                     except ImportError:
                         print(f"⚠️  {module_name} installed but not available (may need system dependencies)")
+                        if module_name == 'pyaudio':
+                            print(f"   💡 Alternative: Speech recognition can work without PyAudio for file input")
                 else:
-                    print(f"⚠️  Failed to install {package} (expected for some packages)")
+                    if module_name == 'pyaudio':
+                        print(f"⚠️  PyAudio installation failed (common due to system dependencies)")
+                        print(f"   💡 Audio input features will be limited but file-based audio processing still works")
+                        print(f"   💡 To fix: Install system packages: sudo apt-get install portaudio19-dev python3-dev")
+                    else:
+                        print(f"⚠️  Failed to install {package} (expected for some packages)")
             except Exception as e:
                 print(f"⚠️  Error installing {package}: {e}")
     
     return True  # Optional dependencies don't affect overall success
 
 def test_and_install_external_dependencies():
-    """Test and install critical external dependencies."""
-    print("\n🔍 Testing critical external dependencies...")
-    
-    critical_packages = {
-        'numpy': 'numpy>=2.3.0',
-        'matplotlib': 'matplotlib>=3.10.0', 
-        'websockets': 'websockets>=15.0',
-        'flask': 'flask>=3.1.0',
-        'flask_cors': 'flask-cors>=6.0.0'
-    }
-    
-    missing_packages = []
-    
-    for module_name, pip_package in critical_packages.items():
-        try:
-            __import__(module_name)
-            print(f"✓ {module_name} available")
-        except ImportError:
-            print(f"❌ {module_name} missing")
-            missing_packages.append(pip_package)
-    
-    if missing_packages:
-        print(f"\n🔧 Installing missing critical packages...")
-        if install_pip_packages(missing_packages):
-            # Verify installation
-            still_missing = []
-            for module_name, pip_package in critical_packages.items():
-                try:
-                    __import__(module_name)
-                    print(f"✓ {module_name} now available")
-                except ImportError:
-                    still_missing.append(module_name)
-            
-            if still_missing:
-                print(f"❌ Still missing after installation: {', '.join(still_missing)}")
-                return False
-        else:
-            return False
-    
-    print("✅ All critical external dependencies available")
-    return True
     """Test and install critical external dependencies."""
     print("\n🔍 Testing critical external dependencies...")
     
@@ -343,12 +320,18 @@ def setup_rasa():
         import rasa
         print(f"Rasa {rasa.__version__} is available")
     except ImportError:
+        import sys
+        version = sys.version_info
         print("⚠️  Rasa is not installed in current environment")
-        print("   This is expected with Python 3.13.5")
-        print("   For Rasa functionality:")
-        print("   1. Use Python 3.8-3.11 environment")
-        print("   2. Or wait for Rasa updates supporting Python 3.13+")
-        print("   3. Core Teacher1 functionality will work without Rasa")
+        if version.major == 3 and version.minor >= 12:
+            print(f"   This is expected with Python {version.major}.{version.minor}.{version.micro}")
+            print("   Rasa currently supports Python 3.8-3.11")
+            print("   💡 Solutions:")
+            print("   1. Use Python 3.8-3.11 environment (recommended)")
+            print("   2. Wait for Rasa updates supporting Python 3.12+")
+            print("   3. Use core Teacher1 functionality (works without Rasa)")
+        else:
+            print("   Install Rasa with: pip install rasa>=3.6.0 rasa-sdk>=3.6.0")
         return False
     
     # Train the Rasa model

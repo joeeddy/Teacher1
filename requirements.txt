@@ -1,24 +1,20 @@
-# Core dependencies for Teacher1 project - Python 3.13.5 compatible
+# Core dependencies for Teacher1 project - Python 3.12+ compatible
 numpy>=2.3.0
 matplotlib>=3.10.0
 
 # GUI dependencies
-# tkinter is built-in with Python
+# tkinter is built-in with Python but may need: sudo apt-get install python3-tk
 
 # Speech and audio dependencies (optional - may require system audio setup)
-# speechrecognition
-# pyaudio  # May require system audio libraries
-# pyttsx3
+SpeechRecognition>=3.10.0
+pyttsx3>=2.90
+# pyaudio  # Often requires system audio libraries: sudo apt-get install portaudio19-dev python3-dev
 
-# Rasa chatbot framework - Note: Currently using conda environment with Python 3.13.5
-# For Rasa compatibility, we recommend using Python 3.8-3.11 or updating to latest Rasa versions
-# rasa>=3.6.0  # Not compatible with Python 3.13 yet
-# rasa-sdk>=3.6.0  # Not compatible with Python 3.13 yet
-
-# Alternative: Use Rasa compatible Python version or wait for updates
-# We have installed core dependencies that work with Python 3.13.5
-
-# ML dependencies (install separately when Rasa is available)
+# Rasa chatbot framework - NOTE: Limited Python 3.12+ support
+# For full Rasa compatibility, use Python 3.8-3.11 environment
+# Uncomment below if using compatible Python version:
+# rasa>=3.6.0
+# rasa-sdk>=3.6.0
 # tensorflow>=2.13.0
 # spacy>=3.7.0
 
