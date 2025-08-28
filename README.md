@@ -39,7 +39,7 @@ It implements a **fractal, emergent AI architecture**—where intelligence arise
 > **Note:**  
 > This repository presents a **compressed/minimal version** of my full fractal emergent AI system. The core principles and agentic behaviors are preserved, but some advanced features and large-scale dynamics have been simplified for clarity, portability, and community collaboration.
 
-- Use as a template or seed for your own fractal, agentic projects—or to propose enhancements!
+- Use as a template or seed for your own fractal, agentic projects—or to propose enhancements! Hippocrates-Edu@proton.me
 
 **Contributions and AGI research partnerships are welcome!**
 
