@@ -100,9 +100,12 @@ class ComprehensiveTestSuite:
         optional_modules = {
             'pyttsx3': 'Text-to-speech functionality',
             'speech_recognition': 'Speech input processing',
-            'pyaudio': 'Audio input/output (system dependent)'
+            'pyaudio': 'Audio input/output (system dependent)',
+            'transformers': 'HuggingFace AI models',
+            'torch': 'AI/ML backend',
         }
         
+        # Test Python packages
         for module_name, description in optional_modules.items():
             try:
                 mod = __import__(module_name)
@@ -114,10 +117,26 @@ class ComprehensiveTestSuite:
                 recommendations = {
                     'pyttsx3': 'pip install pyttsx3; sudo apt-get install espeak',
                     'speech_recognition': 'pip install SpeechRecognition',
-                    'pyaudio': 'sudo apt-get install portaudio19-dev; pip install pyaudio'
+                    'pyaudio': 'sudo apt-get install portaudio19-dev; pip install pyaudio',
+                    'transformers': 'pip install transformers>=4.21.0',
+                    'torch': 'pip install torch>=2.0.0'
                 }
-                self.log_test('optional_deps', module_name, False, str(e), 
-                            recommendations.get(module_name, "Optional - functionality limited without it"))
+                rec = recommendations.get(module_name, f"pip install {module_name}")
+                self.log_test('optional_deps', module_name, False, str(e), rec)
+        
+        # Test espeak system dependency
+        try:
+            import subprocess
+            result = subprocess.run(['which', 'espeak'], capture_output=True, text=True)
+            if result.returncode == 0:
+                print(f"  ✓ espeak system package")
+                self.log_test('optional_deps', 'espeak', True, "Text-to-speech audio output support")
+            else:
+                print(f"  ? espeak: not found")
+                self.log_test('optional_deps', 'espeak', False, "Not found in system PATH", "sudo apt-get install espeak espeak-data")
+        except Exception as e:
+            print(f"  ? espeak: {e}")
+            self.log_test('optional_deps', 'espeak', False, str(e), "sudo apt-get install espeak espeak-data")
     
     def test_core_modules(self):
         """Test Teacher1 core modules"""
