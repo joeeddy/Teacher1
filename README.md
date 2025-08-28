@@ -43,6 +43,12 @@ It implements a **fractal, emergent AI architecture**—where intelligence arise
 
 **Contributions and AGI research partnerships are welcome!**
 
+## Works with repo-relay
+
+**teacher1** is a minimal, shareable version of my fractal emergent AI system, designed to integrate seamlessly with [**repo-relay**](https://github.com/joeeddy/repo-relay) for distributed AGI and multi-agent research.
+
+For orchestration, scaling, or collaboration workflows, see [repo-relay](https://github.com/joeeddy/repo-relay).
+
 ## Quick Start
 
 ### Installation
