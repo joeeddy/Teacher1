@@ -30,6 +30,20 @@ def run_command(command, cwd=None, check=True):
             print(f"Error output: {e.stderr}")
         return None
 
+def check_espeak_availability():
+    """Check if espeak is available for text-to-speech."""
+    try:
+        result = subprocess.run(['which', 'espeak'], capture_output=True, text=True)
+        if result.returncode == 0:
+            print("✓ espeak system package available")
+            return True
+        else:
+            print("? espeak missing (affects TTS audio output)")
+            return False
+    except Exception:
+        print("? espeak status unknown")
+        return False
+
 def check_python_version():
     """Check if Python version is compatible."""
     version = sys.version_info
@@ -85,61 +99,83 @@ def install_pip_packages(packages):
         return False
 
 def test_and_install_optional_dependencies():
-    """Test and optionally install non-critical dependencies."""
+    """Test and optionally install non-critical dependencies using the comprehensive manager."""
     print("\n🔍 Testing optional dependencies...")
     
-    optional_packages = {
-        'pyttsx3': 'pyttsx3>=2.90',
-        'speech_recognition': 'SpeechRecognition>=3.10.0',
-        'pyaudio': 'pyaudio'  # Note: may require system audio libraries
-    }
-    
-    missing_packages = []
-    
-    for module_name, pip_package in optional_packages.items():
-        try:
-            __import__(module_name)
-            print(f"✓ {module_name} available")
-        except ImportError:
-            print(f"? {module_name} missing (optional)")
-            missing_packages.append(pip_package)
-    
-    if missing_packages:
-        print(f"\n🔧 Attempting to install optional packages...")
-        print("   Note: Some may fail due to system requirements (audio libraries, etc.)")
-        print("   💡 For text-to-speech: sudo apt-get install espeak espeak-data")
+    try:
+        from optional_dependencies_manager import OptionalDependencyManager
+        manager = OptionalDependencyManager()
         
-        # Try to install each package individually for better error handling
-        for package in missing_packages:
-            try:
-                module_name = package.split('>=')[0].replace('-', '_').lower()
-                
-                # Special handling for PyAudio which often has installation issues
-                if module_name == 'pyaudio':
+        # Get current status
+        working, total, percentage = manager.get_summary_stats()
+        print(f"📊 Current Status: {working}/{total} ({percentage:.0f}%) dependencies available")
+        
+        # Show detailed status
+        status = manager.get_all_dependencies_status()
+        
+        # Attempt installations for missing packages
+        missing_packages = []
+        for dep_name, dep_status in status.items():
+            if dep_status['available']:
+                print(f"✓ {dep_name} available")
+            else:
+                print(f"? {dep_name} missing (optional)")
+                if dep_status['spec']['pip_package']:
+                    missing_packages.append(dep_status['spec']['pip_package'])
+        
+        if missing_packages:
+            print(f"\n🔧 Attempting to install optional packages...")
+            print("   Note: Some may fail due to system requirements or network issues")
+            print("   💡 Use install_optional_dependencies.sh for comprehensive installation")
+            
+            # Try to install each package individually with better error handling
+            for package in missing_packages[:2]:  # Limit to first 2 to avoid long timeouts
+                try:
+                    module_name = package.split('>=')[0].replace('-', '_').lower()
                     print(f"🔧 Attempting to install {package}...")
-                    print(f"   Note: PyAudio requires system audio libraries (portaudio19-dev)")
-                    print(f"   If installation fails, audio features will be limited but other functionality works")
                     
-                result = run_command(f"pip install {package}", check=False)
-                if result and result.returncode == 0:
-                    try:
-                        __import__(module_name)
-                        print(f"✅ {module_name} successfully installed and available")
-                    except ImportError:
-                        print(f"⚠️  {module_name} installed but not available (may need system dependencies)")
-                        if module_name == 'pyaudio':
-                            print(f"   💡 Alternative: Speech recognition can work without PyAudio for file input")
-                else:
-                    if module_name == 'pyaudio':
-                        print(f"⚠️  PyAudio installation failed (common due to system dependencies)")
-                        print(f"   💡 Audio input features will be limited but file-based audio processing still works")
-                        print(f"   💡 To fix: Install system packages: sudo apt-get install portaudio19-dev python3-dev")
+                    result = run_command(f"pip install --timeout 30 {package}", check=False)
+                    if result and result.returncode == 0:
+                        try:
+                            __import__(module_name)
+                            print(f"✅ {module_name} successfully installed and available")
+                        except ImportError:
+                            print(f"⚠️  {module_name} installed but not available (may need system dependencies)")
                     else:
-                        print(f"⚠️  Failed to install {package} (expected for some packages)")
-            except Exception as e:
-                print(f"⚠️  Error installing {package}: {e}")
+                        print(f"⚠️  {package} installation failed (network/system dependency issue)")
+                        dep_info = next((d for d in status.values() if d['spec']['pip_package'] == package), None)
+                        if dep_info:
+                            print(f"   💡 Fallback: {dep_info['spec']['fallback']}")
+                except Exception as e:
+                    print(f"⚠️  Error installing {package}: {e}")
+        
+        # Final status check
+        final_working, final_total, final_percentage = manager.get_summary_stats()
+        print(f"\n📊 Final Status: {final_working}/{final_total} ({final_percentage:.0f}%) dependencies available")
+        
+        return True
     
-    return True  # Optional dependencies don't affect overall success
+    except ImportError:
+        # Fallback to basic implementation if manager not available
+        print("⚠️  Optional dependencies manager not available, using basic implementation")
+        
+        basic_packages = {
+            'pyttsx3': 'pyttsx3>=2.90',
+            'speech_recognition': 'SpeechRecognition>=3.10.0',
+            'pyaudio': 'pyaudio',
+        }
+        
+        missing_packages = []
+        for module_name, pip_package in basic_packages.items():
+            try:
+                __import__(module_name)
+                print(f"✓ {module_name} available")
+            except ImportError:
+                print(f"? {module_name} missing (optional)")
+                missing_packages.append(pip_package)
+        
+        print(f"\n📊 Basic Status: {len(basic_packages) - len(missing_packages)}/{len(basic_packages)} basic dependencies available")
+        return True
 
 def test_and_install_external_dependencies():
     """Test and install critical external dependencies."""
