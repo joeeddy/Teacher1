@@ -9,7 +9,7 @@ An interactive educational platform for early learners featuring AI-powered comp
 - **Interactive GUI**: Large text interface designed for early learners
 - **Speech Recognition**: Voice input capabilities for hands-free interaction
 - **Text-to-Speech**: Audio output for enhanced accessibility
-- **Rasa Chatbot**: Conversational AI for educational assistance
+- **BlenderBot Chatbot**: Child-friendly conversational AI using HuggingFace transformers
 - **WebSocket Communication**: Real-time bidirectional communication between AI systems
 - **Web Interface**: Modern web-based chat interface with embedded content viewer
 
@@ -23,9 +23,11 @@ An interactive educational platform for early learners featuring AI-powered comp
 - Embedded educational content from trusted websites
 
 ### Advanced Features
-- **Bidirectional AI Communication**: Real-time interaction between Fractal AI and Rasa chatbot
+- **Bidirectional AI Communication**: Real-time interaction between Fractal AI and BlenderBot chatbot
 - **Turn-taking Protocol**: Intelligent conversation management between AI systems
 - **Educational Context Integration**: AI insights tailored for learning applications
+- **Child-Friendly Content Filtering**: Automatic filtering of inappropriate content for young learners
+- **Educational Response Templates**: Fallback responses focused on learning and encouragement
 - **Message Deduplication**: Prevention of communication loops and spam
 - **Structured JSON Messaging**: Standardized communication format for reliability
 - **Embedded Webview Component**: Secure iframe integration for educational content
@@ -47,12 +49,10 @@ An interactive educational platform for early learners featuring AI-powered comp
    pip install -r requirements.txt
    ```
 
-3. **Set up the Rasa chatbot**
-   ```bash
-   cd rasa_bot
-   rasa train
-   cd ..
-   ```
+3. **The BlenderBot chatbot is ready to use**
+   - The system will automatically download the BlenderBot model on first use
+   - If the model download fails, it uses educational fallback responses
+   - No additional training is required
 
 ### Quick Verification
 

@@ -1,6 +1,6 @@
-# Teacher1 Rasa Chatbot
+# Teacher1 BlenderBot Chatbot
 
-This directory contains the Rasa chatbot integration for the Teacher1 educational project.
+This directory contains the BlenderBot chatbot integration for the Teacher1 educational project.
 
 ## Quick Start
 
@@ -9,14 +9,7 @@ This directory contains the Rasa chatbot integration for the Teacher1 educationa
 pip install -r ../requirements.txt
 ```
 
-### 2. Train the Model
-From the Teacher1 root directory:
-```bash
-cd rasa_bot
-rasa train
-```
-
-### 3. Test the Chatbot
+### 2. Test the Chatbot
 ```bash
 # Interactive chat with text-to-speech
 python chatbot_integration.py
@@ -28,107 +21,137 @@ python chatbot_integration.py --no-tts
 python chatbot_integration.py --speech
 ```
 
-### 4. Run Rasa Shell (Alternative)
+### 3. Enable WebSocket Communication
 ```bash
-rasa shell
+# Connect to Fractal AI system
+python chatbot_integration.py --websocket
 ```
 
 ## File Structure
 
-- `config.yml` - Rasa pipeline and policy configuration
-- `domain.yml` - Bot's domain including intents, entities, slots, and responses
-- `data/` - Training data directory
-  - `nlu.yml` - Natural Language Understanding training examples
-  - `stories.yml` - Conversation flow training data
-  - `rules.yml` - Rule-based conversation patterns
-- `chatbot_integration.py` - Integration script with Teacher1 components
-- `models/` - Trained models (created after running `rasa train`)
+- `chatbot_integration.py` - Main integration script with Teacher1 components
+- `README.md` - This documentation file
 
 ## Features
 
 The chatbot is designed for early learners and includes:
 
-### Supported Intents
-- **Greetings**: Hello, hi, good morning
-- **Goodbyes**: Bye, see you later, goodbye
-- **Help requests**: Help, what can you do, I need help
-- **Subject requests**: Math, reading, spelling, numbers lessons
+### AI-Powered Conversation
+- **BlenderBot Model**: Uses facebook/blenderbot-400M-distill from HuggingFace
+- **Child-Friendly Filtering**: Automatically filters inappropriate content
+- **Educational Focus**: Responses tailored for learning and encouragement
+- **Fallback Responses**: Educational templates when model is unavailable
 
 ### Educational Content
-- **Math**: Simple addition, subtraction, counting
-- **Reading**: Letter sounds, word recognition, phonics
-- **Spelling**: Basic word spelling practice
-- **Numbers**: Counting, number recognition, comparison
+- **Math**: Simple addition, subtraction, counting discussions
+- **Reading**: Letter sounds, word recognition, story discussions
+- **Spelling**: Basic word spelling encouragement
+- **Numbers**: Counting, number recognition, comparison help
+- **General Learning**: Encouraging responses that promote curiosity
 
 ### Integration Features
 - **Text-to-Speech**: Responses can be spoken aloud using the existing `text_to_speech.py`
 - **Speech Recognition**: Input can be received via voice (using existing `speech_recognition.py`)
+- **WebSocket Communication**: Bidirectional communication with Fractal AI system
 - **GUI Integration**: Can be integrated with the existing `big_text_gui.py`
 
-## Training Data
+## Model Configuration
 
-The bot comes with basic training data suitable for early learners. You can extend the training data by:
+### BlenderBot Model
+- **Default Model**: `facebook/blenderbot-400M-distill`
+- **Custom Model**: Use `--model-name` parameter to specify different models
+- **Automatic Download**: Model downloads automatically on first use
+- **Fallback Mode**: Uses educational templates if model unavailable
 
-1. Adding more examples to `data/nlu.yml`
-2. Creating new stories in `data/stories.yml`
-3. Adding new responses in `domain.yml`
+### Child-Friendly Features
+- **Content Filtering**: Removes inappropriate words and themes
+- **Educational Enhancement**: Adds encouraging endings to responses
+- **Topic Detection**: Recognizes educational topics (math, reading, etc.)
+- **Positive Language**: Converts negative language to learning opportunities
 
 ## Customization
 
-### Adding New Lessons
-1. Add new intents to `domain.yml`
-2. Add training examples to `data/nlu.yml`
-3. Create stories in `data/stories.yml`
-4. Add response templates to `domain.yml`
+### Adding New Educational Responses
+Edit the `educational_responses` dictionary in `chatbot_integration.py`:
 
-### Modifying Responses
-Edit the `responses` section in `domain.yml` to customize what the bot says.
+```python
+self.educational_responses = {
+    'your_topic': [
+        "Response option 1",
+        "Response option 2",
+        "Response option 3"
+    ]
+}
+```
+
+### Modifying Content Filters
+Update the `inappropriate_words` set to adjust content filtering:
+
+```python
+self.inappropriate_words = {
+    'word1', 'word2', 'word3'  # Add words to filter
+}
+```
 
 ## Advanced Usage
 
-### Custom Actions
-To add custom actions (like integrating with the fractal AI components):
+### WebSocket Integration with Fractal AI
+The chatbot automatically integrates with the Fractal AI system:
 
-1. Create a `actions.py` file
-2. Define custom action classes
-3. Update `domain.yml` to include the actions
-4. Run the action server: `rasa run actions`
+```bash
+# Enable WebSocket communication
+python chatbot_integration.py --websocket
 
-### Integration with Fractal AI
-The chatbot can potentially be integrated with the fractal AI system in `fractal_emergent_ai.py` for more advanced educational interactions.
+# Custom ports
+python chatbot_integration.py --websocket --websocket-port 8766 --target-port 8765
+```
+
+### Custom Model Loading
+Use different BlenderBot variants:
+
+```bash
+# Use a different model
+python chatbot_integration.py --model-name facebook/blenderbot-1B-distill
+
+# Smaller model for lower memory usage
+python chatbot_integration.py --model-name facebook/blenderbot-90M
+```
 
 ## Troubleshooting
 
-### Model Training Issues
-- Ensure all dependencies are installed: `pip install -r ../requirements.txt`
-- Check that training data files are properly formatted YAML
-- Verify the config.yml pipeline is compatible with your Rasa version
+### Model Loading Issues
+- **Network Issues**: Model downloads from HuggingFace require internet connection
+- **Memory Issues**: Use smaller models like `facebook/blenderbot-90M` for limited memory
+- **Fallback Mode**: System automatically uses educational templates if model fails
 
 ### Speech Recognition Issues
 - Ensure microphone permissions are granted
-- Install required audio dependencies: `pip install pyaudio`
 - Test the standalone speech recognition: `python ../speech_recognition.py`
 
 ### Text-to-Speech Issues
 - Install pyttsx3 if not already installed: `pip install pyttsx3`
 - Test standalone TTS: `python ../text_to_speech.py`
 
+### WebSocket Communication Issues
+- Ensure Fractal AI system is running on target port
+- Check firewall settings for local network communication
+- Use `--websocket-port` and `--target-port` to configure ports
+
 ## Development
 
-### Adding New Training Data
-After modifying training data files, retrain the model:
-```bash
-rasa train
-```
-
 ### Testing Changes
-Use the Rasa shell to quickly test changes:
+Use the interactive mode to test responses:
 ```bash
-rasa shell
+python chatbot_integration.py
 ```
 
 ### Debugging
-Enable debug logging:
+Enable verbose output and check logs for detailed information:
 ```bash
-rasa shell --debug
+python chatbot_integration.py --websocket  # Shows WebSocket communication logs
 ```
+
+### Performance Optimization
+- Use CPU-only mode by default (automatically configured)
+- GPU support available if CUDA is installed
+- Model caching reduces subsequent startup times
