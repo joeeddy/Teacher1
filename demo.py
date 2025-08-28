@@ -81,7 +81,7 @@ def demo_rasa_integration():
     
     # Test the integration script without actually starting Rasa
     try:
-        from rasa_bot.chatbot_integration import Teacher1ChatBot
+        from personalized_chatbot import PersonalizedKindergartenChatbot
         print("✓ Rasa integration components are available!")
         
         # Create a simple mock conversation
@@ -95,7 +95,7 @@ def demo_rasa_integration():
         
         print("\n📝 To set up the full chatbot:")
         print("  1. pip install -r requirements.txt")
-        print("  2. cd rasa_bot && rasa train")
+        print("  2. Run the demo: python demo.py")
         print("  3. python chatbot_integration.py")
         return True
     except ImportError as e:
@@ -118,7 +118,7 @@ Teacher1/
 ├── text_to_speech.py        # Audio output
 ├── fractal_emergent_ai.py  # Advanced AI
 ├── fractal_modules.py       # AI components
-└── rasa_bot/               # Chatbot integration
+└── personalized_chatbot.py    # Educational chatbot
     ├── README.md           # Chatbot documentation
     ├── config.yml          # Rasa configuration
     ├── domain.yml          # Bot responses & intents
@@ -168,7 +168,7 @@ def main():
     print(f"\n🚀 Next Steps:")
     print("1. Install dependencies: pip install -r requirements.txt")
     print("2. Run setup script: python setup.py")
-    print("3. Start the chatbot: python rasa_bot/chatbot_integration.py")
+    print("3. Start the chatbot: python personalized_chatbot.py")
     
     print("\n✨ The Teacher1 platform is ready for educational AI!")
 

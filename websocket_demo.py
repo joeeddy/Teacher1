@@ -15,7 +15,7 @@ Usage Examples:
     python websocket_demo.py --ai-only
     
     # Run only Rasa chatbot with WebSocket enabled
-    python websocket_demo.py --rasa-only
+    python websocket_demo.py --chatbot-only
     
     # Test with mock systems
     python websocket_demo.py --test
@@ -75,24 +75,26 @@ def run_fractal_ai():
         print("   Please ensure numpy and matplotlib are installed")
 
 
-def run_rasa_chatbot():
-    """Run the Rasa chatbot with WebSocket communication."""
+def run_personalized_chatbot():
+    """Run the personalized chatbot."""
     try:
-        sys.path.append(os.path.join(project_root, 'rasa_bot'))
-        from chatbot_integration import Teacher1ChatBot
+        from personalized_chatbot import PersonalizedKindergartenChatbot
         
-        print("🤖 Starting Rasa Chatbot with WebSocket communication...")
-        print("   Server: localhost:8766")
-        print("   Target: localhost:8765 (Fractal AI)")
+        print("🤖 Starting Personalized Chatbot...")
+        print("   Interactive educational chat")
         print("   Type messages to chat, or 'quit' to exit")
         
-        chatbot = Teacher1ChatBot()
+        chatbot = PersonalizedKindergartenChatbot()
         
         try:
-            # Run with WebSocket enabled
-            asyncio.run(chatbot.chat_loop(
-                use_speech=False,
-                use_tts=False,  # Disable TTS for demo
+            chatbot.interactive_session()
+        except KeyboardInterrupt:
+            print("\n👋 Goodbye!")
+        except Exception as e:
+            print(f"Error during chat: {e}")
+    except ImportError as e:
+        print(f"❌ Error: Could not import personalized chatbot: {e}")
+        print("   Please ensure the personalized_chatbot.py module is available")
                 enable_websocket=True
             ))
             
@@ -118,8 +120,8 @@ async def run_both_systems():
     # Give AI time to start
     await asyncio.sleep(3)
     
-    # Run Rasa chatbot in main thread
-    run_rasa_chatbot()
+    # Run personalized chatbot in main thread
+    run_personalized_chatbot()
 
 
 async def run_test_mode():
@@ -147,18 +149,18 @@ system and the Rasa chatbot. Both systems can ask and answer questions in real-t
 Available Commands:
   --both      Run both AI and chatbot together (recommended)
   --ai-only   Run only Fractal AI with WebSocket enabled  
-  --rasa-only Run only Rasa chatbot with WebSocket enabled
+  --chatbot-only Run only personalized chatbot
   --test      Run test mode with mock systems
   --help      Show this help message
 
 WebSocket Configuration:
   - Fractal AI runs server on port 8765, connects to port 8766
-  - Rasa chatbot runs server on port 8766, connects to port 8765
+  - Chatbot runs as interactive educational system
   
 Message Format:
   {
     "message_id": "unique_id",
-    "sender": "fractal_ai|rasa_bot",
+    "sender": "fractal_ai|chatbot",
     "type": "question|answer|ack", 
     "content": "message text",
     "in_reply_to": "replied_message_id",
@@ -195,14 +197,14 @@ async def main():
                        help="Run both AI and chatbot together")
     parser.add_argument("--ai-only", action="store_true",
                        help="Run only Fractal AI with WebSocket")
-    parser.add_argument("--rasa-only", action="store_true", 
-                       help="Run only Rasa chatbot with WebSocket")
+    parser.add_argument("--chatbot-only", action="store_true", 
+                       help="Run only personalized chatbot")
     parser.add_argument("--test", action="store_true",
                        help="Run test mode with mock systems")
     
     args = parser.parse_args()
     
-    if not any([args.both, args.ai_only, args.rasa_only, args.test]):
+    if not any([args.both, args.ai_only, args.chatbot_only, args.test]):
         print_usage()
         return
     
@@ -216,8 +218,8 @@ async def main():
             await run_both_systems()
         elif args.ai_only:
             run_fractal_ai()
-        elif args.rasa_only:
-            run_rasa_chatbot()
+        elif args.chatbot_only:
+            run_personalized_chatbot()
             
     except KeyboardInterrupt:
         print("\n👋 Demo stopped by user")

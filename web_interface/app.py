@@ -23,15 +23,7 @@ sys.path.insert(0, project_root)
 # Import configuration
 from web_interface.config import WebInterfaceConfig, DEBUG, HOST, PORT
 
-# Import chatbot
-CHATBOT_AVAILABLE = False
-try:
-    from rasa_bot.chatbot_integration import Teacher1ChatBot
-    CHATBOT_AVAILABLE = True
-except ImportError:
-    print("Warning: Rasa chatbot not available. Using personalized chatbot.")
-
-# Import personalized chatbot as fallback
+# Import personalized chatbot
 PERSONALIZED_CHATBOT_AVAILABLE = False
 try:
     from personalized_chatbot import PersonalizedKindergartenChatbot
@@ -62,15 +54,7 @@ class Teacher1WebInterface:
         self.chatbot = None
         self.personalized_chatbot = None
         
-        if CHATBOT_AVAILABLE:
-            try:
-                self.chatbot = Teacher1ChatBot()
-                logger.info("Rasa chatbot initialized successfully")
-            except Exception as e:
-                logger.error(f"Failed to initialize Rasa chatbot: {e}")
-                self.chatbot = None
-        
-        # Initialize personalized chatbot as fallback or primary
+        # Initialize personalized chatbot as primary option
         if PERSONALIZED_CHATBOT_AVAILABLE:
             try:
                 self.personalized_chatbot = PersonalizedKindergartenChatbot()
@@ -202,7 +186,6 @@ class Teacher1WebInterface:
             """Health check endpoint"""
             return jsonify({
                 'status': 'healthy',
-                'chatbot_available': CHATBOT_AVAILABLE,
                 'personalized_chatbot_available': PERSONALIZED_CHATBOT_AVAILABLE,
                 'active_sessions': len(self.active_sessions),
                 'version': '1.0.0'
@@ -253,33 +236,6 @@ class Teacher1WebInterface:
                 
             except Exception as e:
                 logger.error(f"Personalized chatbot error: {e}")
-                bot_response = self.get_fallback_response(message)
-                response = {
-                    'message': bot_response,
-                    'timestamp': self.get_timestamp(),
-                    'personalized': False
-                }
-        
-        # Try Rasa chatbot as fallback
-        elif CHATBOT_AVAILABLE and self.chatbot:
-            try:
-                # Use async chatbot if available
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                try:
-                    bot_response = loop.run_until_complete(
-                        self.chatbot.get_response(message, session_id)
-                    )
-                finally:
-                    loop.close()
-                    
-                response = {
-                    'message': bot_response,
-                    'timestamp': self.get_timestamp(),
-                    'personalized': False
-                }
-            except Exception as e:
-                logger.error(f"Chatbot error: {e}")
                 bot_response = self.get_fallback_response(message)
                 response = {
                     'message': bot_response,
@@ -430,7 +386,7 @@ class Teacher1WebInterface:
         """Run the Flask application"""
         logger.info(f"Starting Teacher1 Web Interface on {host}:{port}")
         logger.info(f"Debug mode: {debug}")
-        logger.info(f"Chatbot available: {CHATBOT_AVAILABLE}")
+        logger.info(f"Personalized chatbot available: {PERSONALIZED_CHATBOT_AVAILABLE}")
         
         self.app.run(host=host, port=port, debug=debug, threaded=True)
 

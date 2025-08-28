@@ -21,7 +21,7 @@ All WebSocket messages use this structured JSON format:
 ```json
 {
   "message_id": "unique_uuid",
-  "sender": "fractal_ai|rasa_bot",
+  "sender": "fractal_ai|chatbot",
   "type": "question|answer|ack",
   "content": "plain text message content",
   "in_reply_to": "message_id_of_original_question",
@@ -89,7 +89,7 @@ python fractal_emergent_ai.py --websocket --quick
 
 **Rasa Chatbot with WebSocket:**
 ```bash
-python rasa_bot/chatbot_integration.py --websocket --no-tts
+python personalized_chatbot.py
 ```
 
 ### 3. Advanced Configuration
@@ -289,7 +289,7 @@ Error: [Errno 111] Connection refused
 python fractal_emergent_ai.py --websocket
 
 # Terminal 2: Start Rasa (after AI is running)  
-python rasa_bot/chatbot_integration.py --websocket
+python personalized_chatbot.py
 ```
 
 #### Import Errors
