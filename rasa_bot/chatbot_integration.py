@@ -1,7 +1,7 @@
 """
-Teacher1 Rasa Chatbot Integration
----------------------------------
-This script provides integration between the Teacher1 project and the Rasa chatbot.
+Teacher1 BlenderBot Chatbot Integration
+--------------------------------------
+This script provides integration between the Teacher1 project and a child-friendly BlenderBot.
 It allows the chatbot to work with existing Teacher1 components like text-to-speech
 and speech recognition, plus WebSocket communication with the Fractal AI system.
 """
@@ -11,19 +11,21 @@ import sys
 import asyncio
 import logging
 import threading
-from typing import Optional
+import random
+import re
+from typing import Optional, List
 
 # Add the project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
 try:
-    from rasa.core.agent import Agent
-    from rasa.core.interpreter import RasaNLUInterpreter
-    RASA_AVAILABLE = True
+    from transformers import BlenderbotTokenizer, BlenderbotForConditionalGeneration
+    import torch
+    BLENDERBOT_AVAILABLE = True
 except ImportError:
-    RASA_AVAILABLE = False
-    print("Rasa not installed. Please run: pip install -r requirements.txt")
+    BLENDERBOT_AVAILABLE = False
+    print("BlenderBot (transformers) not installed. Please run: pip install transformers torch")
 
 # Import existing Teacher1 components
 try:
@@ -51,7 +53,7 @@ except ImportError:
 
 class Teacher1ChatBot:
     """
-    Integration class that combines Rasa chatbot with Teacher1 components
+    Integration class that combines BlenderBot chatbot with Teacher1 components
     and WebSocket communication with the Fractal AI system.
     """
     
@@ -61,19 +63,55 @@ class Teacher1ChatBot:
         Initialize the Teacher1 ChatBot.
         
         Args:
-            model_path: Path to trained Rasa model. If None, uses default path.
+            model_path: Model name for BlenderBot (e.g., 'facebook/blenderbot-400M-distill')
             websocket_port: Port for WebSocket server
             target_port: Port of target WebSocket server (Fractal AI)
         """
-        self.agent = None
-        self.model_path = model_path or os.path.join(
-            os.path.dirname(__file__), "models"
-        )
+        self.tokenizer = None
+        self.model = None
+        self.model_name = model_path or "facebook/blenderbot-400M-distill"
+        
+        # Child-friendly content filtering
+        self.inappropriate_words = {
+            'violence', 'kill', 'death', 'die', 'hurt', 'pain', 'blood', 'weapon',
+            'stupid', 'dumb', 'hate', 'angry', 'mad', 'bad words', 'curse',
+            'scary', 'frightening', 'nightmare', 'monster', 'ghost'
+        }
+        
+        # Educational response templates for fallback
+        self.educational_responses = {
+            'math': [
+                "Math is so much fun! Let's practice counting or simple addition.",
+                "Numbers are everywhere! Can you count to 10 with me?",
+                "Let's solve a fun math puzzle together!"
+            ],
+            'reading': [
+                "Reading opens up magical worlds! What's your favorite story?",
+                "Let's practice reading together. Can you tell me about a book you like?",
+                "Reading is like going on adventures! What would you like to read about?"
+            ],
+            'spelling': [
+                "Spelling helps us write amazing stories! Let's practice some fun words.",
+                "Letters make words, and words make stories! What word should we spell?",
+                "Spelling is like a puzzle with letters! Want to try spelling your name?"
+            ],
+            'numbers': [
+                "Numbers help us understand the world! Let's count something fun.",
+                "Numbers are like friends - they help us with so many things!",
+                "Let's explore numbers together! What's your favorite number?"
+            ],
+            'general': [
+                "That's a great question! Learning is always an adventure.",
+                "I love helping you learn new things! What interests you most?",
+                "You're such a curious learner! That's wonderful!",
+                "Learning together is so much fun! What would you like to explore?"
+            ]
+        }
         
         # WebSocket communication setup
         if WEBSOCKET_AVAILABLE:
             self.websocket_communicator = WebSocketCommunicator(
-                name="rasa_bot",
+                name="blenderbot_chatbot",
                 server_port=websocket_port,
                 target_host="localhost", 
                 target_port=target_port
@@ -97,22 +135,109 @@ class Teacher1ChatBot:
         else:
             self.websocket_communicator = None
         
-        if RASA_AVAILABLE:
-            self._load_agent()
+        if BLENDERBOT_AVAILABLE:
+            self._load_model()
         else:
-            print("Rasa is not available. Text-only mode.")
+            print("BlenderBot is not available. Using educational fallback responses.")
     
-    def _load_agent(self):
-        """Load the Rasa agent."""
+    def _load_model(self):
+        """Load the BlenderBot model and tokenizer."""
         try:
-            if os.path.exists(self.model_path):
-                self.agent = Agent.load(self.model_path)
-                print("Rasa agent loaded successfully!")
-            else:
-                print(f"No trained model found at {self.model_path}")
-                print("Please train the model first using: rasa train")
+            print(f"Loading BlenderBot model: {self.model_name}")
+            self.tokenizer = BlenderbotTokenizer.from_pretrained(self.model_name)
+            self.model = BlenderbotForConditionalGeneration.from_pretrained(self.model_name)
+            
+            # Use CPU for lighter processing (can be changed to GPU if available)
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            self.model.to(device)
+            self.device = device
+            
+            print("BlenderBot model loaded successfully!")
         except Exception as e:
-            print(f"Error loading Rasa agent: {e}")
+            print(f"Error loading BlenderBot model: {e}")
+            print("Falling back to educational response templates.")
+            self.tokenizer = None
+            self.model = None
+    
+    def _filter_inappropriate_content(self, text: str) -> bool:
+        """
+        Check if text contains inappropriate content for children.
+        
+        Args:
+            text: Text to check
+            
+        Returns:
+            True if content is appropriate, False if inappropriate
+        """
+        text_lower = text.lower()
+        
+        # Check for inappropriate words
+        for word in self.inappropriate_words:
+            if word in text_lower:
+                return False
+        
+        # Check for overly complex or adult themes
+        adult_topics = ['politics', 'religion', 'dating', 'romance', 'marriage']
+        for topic in adult_topics:
+            if topic in text_lower:
+                return False
+        
+        return True
+    
+    def _make_child_friendly(self, text: str) -> str:
+        """
+        Make the response more child-friendly and educational.
+        
+        Args:
+            text: Original response text
+            
+        Returns:
+            Child-friendly version of the text
+        """
+        # Remove any inappropriate content patterns
+        text = re.sub(r'\b(um|uh|er)\b', '', text, flags=re.IGNORECASE)
+        
+        # Make it more encouraging and positive
+        if any(word in text.lower() for word in ['bad', 'wrong', 'error', 'fail']):
+            text = "That's okay! Learning means trying new things. " + text
+        
+        # Add educational encouragement
+        encouraging_endings = [
+            " Keep up the great learning!",
+            " You're doing wonderfully!",
+            " Learning is so much fun!",
+            " Great question!",
+            " You're so curious - I love that!"
+        ]
+        
+        if len(text) < 100 and not text.endswith(('!', '?', '.')):
+            text += random.choice(encouraging_endings)
+        
+        return text.strip()
+    
+    def _get_educational_response(self, message: str) -> str:
+        """
+        Generate an educational response based on the message content.
+        
+        Args:
+            message: User message
+            
+        Returns:
+            Educational response
+        """
+        message_lower = message.lower()
+        
+        # Detect educational topics
+        if any(word in message_lower for word in ['math', 'add', 'subtract', 'count', 'number']):
+            return random.choice(self.educational_responses['math'])
+        elif any(word in message_lower for word in ['read', 'book', 'story', 'letter']):
+            return random.choice(self.educational_responses['reading'])
+        elif any(word in message_lower for word in ['spell', 'write', 'word']):
+            return random.choice(self.educational_responses['spelling'])
+        elif any(word in message_lower for word in ['number', 'count', 'digit']):
+            return random.choice(self.educational_responses['numbers'])
+        else:
+            return random.choice(self.educational_responses['general'])
     
     async def get_response(self, message: str, sender_id: str = "user") -> str:
         """
@@ -125,43 +250,91 @@ class Teacher1ChatBot:
         Returns:
             Bot response text
         """
-        if not self.agent:
-            return "I'm sorry, the chatbot is not available right now."
-        
         try:
-            response = await self.agent.handle_text(message, sender_id=sender_id)
-            if response and len(response) > 0:
-                return response[0]["text"]
+            # First check if BlenderBot is available and loaded
+            if self.model and self.tokenizer:
+                return await self._get_blenderbot_response(message)
             else:
-                return "I'm not sure how to respond to that. Can you try asking differently?"
+                # Use educational fallback responses
+                return self._get_educational_response(message)
+                
         except Exception as e:
             print(f"Error getting response: {e}")
-            return "I encountered an error. Please try again."
+            return "I'm sorry, let me try to help you with something else. What would you like to learn about?"
+    
+    async def _get_blenderbot_response(self, message: str) -> str:
+        """
+        Get response from BlenderBot model.
+        
+        Args:
+            message: User input message
+            
+        Returns:
+            BlenderBot response (filtered for child-friendliness)
+        """
+        try:
+            # Create educational context for the prompt
+            educational_prompt = f"You are a friendly, patient teacher for young children. A child says: '{message}'. Respond in a simple, encouraging, and educational way."
+            
+            # Tokenize input
+            inputs = self.tokenizer(educational_prompt, return_tensors="pt").to(self.device)
+            
+            # Generate response
+            with torch.no_grad():
+                outputs = self.model.generate(
+                    **inputs,
+                    max_length=150,
+                    num_beams=3,
+                    no_repeat_ngram_size=2,
+                    temperature=0.7,
+                    do_sample=True,
+                    pad_token_id=self.tokenizer.eos_token_id
+                )
+            
+            # Decode response
+            response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+            
+            # Remove the original prompt from the response
+            if educational_prompt in response:
+                response = response.replace(educational_prompt, "").strip()
+            
+            # Filter and make child-friendly
+            if self._filter_inappropriate_content(response):
+                response = self._make_child_friendly(response)
+            else:
+                # If content is inappropriate, use educational fallback
+                response = self._get_educational_response(message)
+            
+            return response
+            
+        except Exception as e:
+            print(f"Error with BlenderBot generation: {e}")
+            # Fallback to educational response
+            return self._get_educational_response(message)
     
     async def _handle_question(self, message: dict) -> str:
         """Handle incoming questions from the Fractal AI system."""
         question = message['content']
         self.communication_log.append(f"AI Question: {question}")
         
-        # Process the question through Rasa if available
-        if self.agent:
-            try:
-                # Get response from Rasa
-                response = await self.get_response(question, sender_id="fractal_ai")
-                
-                # Enhance response with educational context
-                if "pattern" in question.lower():
-                    response += " From an educational perspective, pattern recognition is fundamental to learning mathematics and reading."
-                elif "learn" in question.lower():
-                    response += " In education, we use scaffolded learning to build knowledge progressively."
-                elif "creative" in question.lower():
-                    response += " Creativity in learning helps students develop problem-solving skills."
-                
-                self.communication_log.append(f"Rasa Response: {response}")
-                return response
-                
-            except Exception as e:
-                logging.error(f"Error processing AI question: {e}")
+        # Process the question through BlenderBot if available
+        try:
+            # Get response from the chatbot
+            response = await self.get_response(question, sender_id="fractal_ai")
+            
+            # Enhance response with educational context
+            if "pattern" in question.lower():
+                response += " From an educational perspective, pattern recognition is fundamental to learning mathematics and reading."
+            elif "learn" in question.lower():
+                response += " In education, we use scaffolded learning to build knowledge progressively."
+            elif "creative" in question.lower():
+                response += " Creativity in learning helps students develop problem-solving skills."
+            
+            self.communication_log.append(f"BlenderBot Response: {response}")
+            return response
+            
+        except Exception as e:
+            logging.error(f"Error processing AI question: {e}")
         
         # Fallback educational response
         fallback_responses = {
@@ -225,13 +398,13 @@ class Teacher1ChatBot:
                 try:
                     # Start server
                     await self.websocket_communicator.start_server()
-                    logging.info("Rasa WebSocket server started")
+                    logging.info("BlenderBot WebSocket server started")
                     
                     # Wait a bit then try to connect as client
                     await asyncio.sleep(2)
                     connected = await self.websocket_communicator.connect_as_client()
                     if connected:
-                        logging.info("Rasa connected to Fractal AI")
+                        logging.info("BlenderBot connected to Fractal AI")
                         
                         # Send an initial educational question
                         await asyncio.sleep(1)
@@ -242,7 +415,7 @@ class Teacher1ChatBot:
                         await asyncio.sleep(1)
                         
                 except Exception as e:
-                    logging.error(f"Rasa WebSocket error: {e}")
+                    logging.error(f"BlenderBot WebSocket error: {e}")
                 finally:
                     await self.websocket_communicator.stop()
             
@@ -251,7 +424,7 @@ class Teacher1ChatBot:
         self.websocket_enabled = True
         self.websocket_thread = threading.Thread(target=run_websocket, daemon=True)
         self.websocket_thread.start()
-        logging.info("Rasa WebSocket communication thread started")
+        logging.info("BlenderBot WebSocket communication thread started")
     
     def stop_websocket_communication(self):
         """Stop WebSocket communication."""
@@ -264,7 +437,7 @@ class Teacher1ChatBot:
                 )
             if self.websocket_thread:
                 self.websocket_thread.join(timeout=5)
-            logging.info("Rasa WebSocket communication stopped")
+            logging.info("BlenderBot WebSocket communication stopped")
     
     def speak_response(self, text: str):
         """
@@ -372,11 +545,12 @@ class Teacher1ChatBot:
     def get_stats(self):
         """Get chatbot and communication statistics.""" 
         stats = {
-            "rasa_available": RASA_AVAILABLE,
+            "blenderbot_available": BLENDERBOT_AVAILABLE,
             "websocket_available": WEBSOCKET_AVAILABLE,
             "websocket_enabled": getattr(self, 'websocket_enabled', False),
             "communication_messages": len(getattr(self, 'communication_log', [])),
-            "educational_context": getattr(self, 'educational_context', {})
+            "educational_context": getattr(self, 'educational_context', {}),
+            "model_loaded": self.model is not None and self.tokenizer is not None
         }
         
         if hasattr(self, 'websocket_communicator') and self.websocket_communicator:
@@ -389,13 +563,13 @@ def main():
     """Main function to run the chatbot."""
     import argparse
     
-    parser = argparse.ArgumentParser(description="Teacher1 Rasa Chatbot")
+    parser = argparse.ArgumentParser(description="Teacher1 BlenderBot Chatbot")
     parser.add_argument("--no-tts", action="store_true", 
                        help="Disable text-to-speech")
     parser.add_argument("--speech", action="store_true",
                        help="Enable speech recognition")
-    parser.add_argument("--model-path", type=str,
-                       help="Path to Rasa model directory")
+    parser.add_argument("--model-name", type=str,
+                       help="BlenderBot model name (default: facebook/blenderbot-400M-distill)")
     parser.add_argument("--websocket", action="store_true",
                        help="Enable WebSocket communication with Fractal AI")
     parser.add_argument("--websocket-port", type=int, default=8766,
@@ -407,7 +581,7 @@ def main():
     
     # Create chatbot instance
     chatbot = Teacher1ChatBot(
-        model_path=args.model_path,
+        model_path=args.model_name,
         websocket_port=args.websocket_port,
         target_port=args.target_port
     )
