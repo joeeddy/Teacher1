@@ -2,6 +2,14 @@
 
 An interactive educational platform for early learners featuring AI-powered components, conversational chatbot, speech recognition, and text-to-speech capabilities.
 
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/joeeddy?label=Sponsor%20me%20on%20GitHub&style=social)](https://github.com/sponsors/joeeddy)
+[![Discuss in GitHub Discussions](https://img.shields.io/badge/Discuss-GitHub%20Discussions-blue?logo=github)](https://github.com/joeeddy/Teacher1/discussions)
+![First Lady's Education Challenge](https://img.shields.io/badge/First%20Lady's%20Education%20Challenge-Participant-green?style=flat-square)
+
+## 🚀 Challenge: First Lady's Education Challenge
+
+This repository is proud to participate in the **First Lady's Education Challenge**, promoting innovative, accessible, and AI-powered educational solutions for early learners. Join the discussion and contribute your ideas, or check out our progress in the [GitHub Discussions](https://github.com/joeeddy/Teacher1/discussions)!
+
 ## Features
 
 ### Core Components
