@@ -15,6 +15,8 @@ class OptionalDependencyManager:
     """Manages optional dependencies for enhanced Teacher1 functionality."""
     
     def __init__(self):
+        # Optional Dependencies Configuration: Define all optional packages with fallback mechanisms
+        # Network-resilient: Each dependency has a clear fallback to ensure functionality
         self.dependency_specs = {
             'pyttsx3': {
                 'pip_package': 'pyttsx3>=2.90',

@@ -134,8 +134,10 @@ def test_and_install_optional_dependencies():
     """Test and optionally install non-critical dependencies using the comprehensive manager.
     
     Network-resilient: Gracefully handles network failures and dependency check errors.
+    Optional Dependencies Handling: All missing dependencies show clear fallback options.
     """
     print("\n🔍 Testing optional dependencies...")
+    print("📝 Note: Network issues are handled gracefully - fallbacks ensure functionality")
     
     try:
         from optional_dependencies_manager import OptionalDependencyManager
@@ -164,13 +166,14 @@ def test_and_install_optional_dependencies():
             return _fallback_optional_dependencies_test()
         
         # Network-resilient: Process available dependencies with fallback info
+        # Optional Dependencies Handling: Show fallback immediately to reassure users
         missing_packages = []
         for dep_name, dep_status in status.items():
             if dep_status['available']:
                 print(f"✓ {dep_name} available")
             else:
                 print(f"? {dep_name} missing (optional)")
-                # Show fallback mechanism immediately
+                # Optional Dependencies Handling: Show fallback mechanism immediately
                 fallback = dep_status.get('spec', {}).get('fallback', 'Basic functionality maintained')
                 print(f"  💡 Fallback: {fallback}")
                 if dep_status.get('spec', {}).get('pip_package'):
@@ -179,7 +182,7 @@ def test_and_install_optional_dependencies():
         if missing_packages:
             print(f"\n🔧 Attempting to install optional packages...")
             print("   Note: Network failures are expected and handled gracefully")
-            print("   💡 Application will work with fallback mechanisms if installation fails")
+            print("   💡 Optional Dependencies Handling: Application will work with fallback mechanisms if installation fails")
             print("   💡 Use install_optional_dependencies.sh for comprehensive installation")
             
             # Network-resilient: Try to install packages with improved timeout handling
@@ -252,6 +255,19 @@ def _fallback_optional_dependencies_test():
         'speech_recognition': {'package': 'SpeechRecognition>=3.10.0', 'fallback': 'File-based audio processing only'},
         'pyaudio': {'package': 'pyaudio', 'fallback': 'File-based audio processing only'},
     }
+    
+    missing_packages = []
+    available_count = 0
+    
+    for module_name, info in basic_packages.items():
+        try:
+            __import__(module_name)
+            print(f"✓ {module_name} available")
+            available_count += 1
+        except ImportError:
+            print(f"? {module_name} missing (optional)")
+            print(f"  💡 Fallback: {info['fallback']}")
+            missing_packages.append(info['package'])
     
     print(f"\n📊 Basic Status: {available_count}/{len(basic_packages)} basic optional dependencies available")
     print("📝 Application will work with available dependencies and fallback mechanisms")
