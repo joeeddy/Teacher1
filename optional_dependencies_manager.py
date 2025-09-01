@@ -73,7 +73,10 @@ class OptionalDependencyManager:
         }
     
     def check_dependency_status(self, dep_name: str) -> Dict:
-        """Check if a specific dependency is available."""
+        """Check if a specific dependency is available.
+        
+        Network-resilient: Safe checking with timeout and error handling.
+        """
         spec = self.dependency_specs.get(dep_name)
         if not spec:
             return {'available': False, 'error': 'Unknown dependency'}
@@ -87,38 +90,79 @@ class OptionalDependencyManager:
             'spec': spec
         }
         
-        if dep_name == 'espeak':
-            # Check system command
-            try:
-                cmd_result = subprocess.run(['which', 'espeak'], 
-                                          capture_output=True, text=True)
-                result['available'] = cmd_result.returncode == 0
-                if result['available']:
-                    # Get espeak version
-                    version_result = subprocess.run(['espeak', '--version'], 
-                                                  capture_output=True, text=True)
-                    if version_result.returncode == 0:
-                        result['version'] = version_result.stdout.strip().split('\n')[0]
-                else:
-                    result['error'] = 'espeak not found in system PATH'
-            except Exception as e:
-                result['error'] = str(e)
-        else:
-            # Check Python module
-            try:
-                module = importlib.import_module(dep_name)
-                result['available'] = True
-                result['version'] = getattr(module, '__version__', 'unknown')
-            except ImportError as e:
-                result['error'] = str(e)
+        try:
+            if dep_name == 'espeak':
+                # Network-resilient: Check system command with timeout
+                try:
+                    cmd_result = subprocess.run(['which', 'espeak'], 
+                                              capture_output=True, text=True, timeout=10)
+                    result['available'] = cmd_result.returncode == 0
+                    if result['available']:
+                        # Get espeak version with timeout
+                        version_result = subprocess.run(['espeak', '--version'], 
+                                                      capture_output=True, text=True, timeout=10)
+                        if version_result.returncode == 0:
+                            result['version'] = version_result.stdout.strip().split('\n')[0]
+                    else:
+                        result['error'] = 'espeak not found in system PATH'
+                except subprocess.TimeoutExpired:
+                    result['error'] = 'espeak check timed out'
+                except Exception as e:
+                    result['error'] = f'espeak check failed: {str(e)}'
+            else:
+                # Network-resilient: Check Python module with safe import and known problematic modules
+                try:
+                    # Special handling for modules known to cause import issues
+                    if dep_name in ['transformers', 'torch']:
+                        # Network-resilient: Use safer subprocess-based checking for problematic modules
+                        import sys
+                        check_result = subprocess.run([
+                            sys.executable, '-c', f'import {dep_name}; print(getattr({dep_name}, "__version__", "unknown"))'
+                        ], capture_output=True, text=True, timeout=15)
+                        
+                        if check_result.returncode == 0:
+                            result['available'] = True
+                            result['version'] = check_result.stdout.strip()
+                        else:
+                            result['error'] = f'Module import failed: {check_result.stderr.strip()}'
+                    else:
+                        # Standard import for stable modules
+                        module = importlib.import_module(dep_name)
+                        result['available'] = True
+                        result['version'] = getattr(module, '__version__', 'unknown')
+                except subprocess.TimeoutExpired:
+                    result['error'] = f'{dep_name} import check timed out (likely compatibility issue)'
+                except ImportError as e:
+                    result['error'] = str(e)
+                except Exception as e:
+                    # Handle unexpected errors that might cause bus errors
+                    result['error'] = f'Module check failed: {str(e)}'
+        except Exception as e:
+            # Network-resilient: Catch any unexpected errors
+            result['error'] = f'Dependency check failed: {str(e)}'
         
         return result
     
     def get_all_dependencies_status(self) -> Dict:
-        """Get status of all optional dependencies."""
+        """Get status of all optional dependencies.
+        
+        Network-resilient: Safe checking with individual error handling.
+        """
         results = {}
         for dep_name in self.dependency_specs.keys():
-            results[dep_name] = self.check_dependency_status(dep_name)
+            try:
+                # Network-resilient: Check each dependency individually with error isolation
+                results[dep_name] = self.check_dependency_status(dep_name)
+            except Exception as e:
+                # Network-resilient: Isolate errors to prevent cascading failures
+                results[dep_name] = {
+                    'name': dep_name,
+                    'available': False,
+                    'version': None,
+                    'error': f'Status check failed: {str(e)}',
+                    'fallback_available': True,
+                    'spec': self.dependency_specs.get(dep_name, {})
+                }
         return results
     
     def get_summary_stats(self) -> Tuple[int, int, float]:
