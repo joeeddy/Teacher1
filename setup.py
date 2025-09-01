@@ -10,8 +10,11 @@ import sys
 import subprocess
 from pathlib import Path
 
-def run_command(command, cwd=None, check=True):
-    """Run a shell command and return the result."""
+def run_command(command, cwd=None, check=True, timeout=60):
+    """Run a shell command and return the result.
+    
+    Enhanced with network-resilient timeout handling for optional dependency operations.
+    """
     print(f"Running: {command}")
     try:
         result = subprocess.run(
@@ -19,11 +22,15 @@ def run_command(command, cwd=None, check=True):
             cwd=cwd,
             check=check,
             capture_output=True,
-            text=True
+            text=True,
+            timeout=timeout  # Network-resilient: prevent hanging on network issues
         )
         if result.stdout:
             print(result.stdout)
         return result
+    except subprocess.TimeoutExpired as e:
+        print(f"⚠️  Command timed out after {timeout}s (likely network issue): {command}")
+        return None
     except subprocess.CalledProcessError as e:
         print(f"Error running command: {e}")
         if e.stderr:
@@ -80,102 +87,192 @@ def install_system_package(package_name):
         return False
 
 def install_pip_packages(packages):
-    """Attempt to install missing pip packages."""
+    """Attempt to install missing pip packages with network-resilient retry logic."""
     if not packages:
         return True
     
     print(f"🔧 Attempting to install pip packages: {', '.join(packages)}")
+    
+    # Network-resilient: Use shorter timeout and retry failed packages individually
+    packages_str = ' '.join(packages)
+    
     try:
-        packages_str = ' '.join(packages)
-        result = run_command(f"pip install {packages_str}", check=False)
+        # First attempt: try installing all packages together with timeout
+        result = run_command(f"pip install --timeout 30 {packages_str}", check=False, timeout=120)
         if result and result.returncode == 0:
             print(f"✅ Successfully installed pip packages")
             return True
         else:
-            print(f"❌ Failed to install some pip packages")
-            return False
+            print(f"⚠️  Batch installation failed, trying individual package installation...")
+            
+            # Network-resilient fallback: try each package individually
+            success_count = 0
+            for package in packages:
+                try:
+                    print(f"🔧 Installing {package} individually...")
+                    result = run_command(f"pip install --timeout 30 {package}", check=False, timeout=60)
+                    if result and result.returncode == 0:
+                        print(f"✅ {package} installed successfully")
+                        success_count += 1
+                    else:
+                        print(f"⚠️  {package} installation failed (network/dependency issue)")
+                except Exception as e:
+                    print(f"⚠️  Error installing {package}: {e}")
+            
+            if success_count > 0:
+                print(f"✅ Partial success: {success_count}/{len(packages)} packages installed")
+                return True
+            else:
+                print(f"❌ No packages could be installed due to network/dependency issues")
+                return False
+                
     except Exception as e:
         print(f"❌ Error installing pip packages: {e}")
         return False
 
 def test_and_install_optional_dependencies():
-    """Test and optionally install non-critical dependencies using the comprehensive manager."""
+    """Test and optionally install non-critical dependencies using the comprehensive manager.
+    
+    Network-resilient: Gracefully handles network failures and dependency check errors.
+    Optional Dependencies Handling: All missing dependencies show clear fallback options.
+    """
     print("\n🔍 Testing optional dependencies...")
+    print("📝 Note: Network issues are handled gracefully - fallbacks ensure functionality")
     
     try:
         from optional_dependencies_manager import OptionalDependencyManager
-        manager = OptionalDependencyManager()
         
-        # Get current status
-        working, total, percentage = manager.get_summary_stats()
-        print(f"📊 Current Status: {working}/{total} ({percentage:.0f}%) dependencies available")
+        # Network-resilient: Safely create manager and handle potential crashes
+        try:
+            manager = OptionalDependencyManager()
+            print("✅ Optional dependencies manager loaded successfully")
+        except Exception as e:
+            print(f"⚠️  Error creating optional dependencies manager: {e}")
+            return _fallback_optional_dependencies_test()
         
-        # Show detailed status
-        status = manager.get_all_dependencies_status()
+        # Network-resilient: Safe status checking with error handling
+        try:
+            working, total, percentage = manager.get_summary_stats()
+            print(f"📊 Current Status: {working}/{total} ({percentage:.0f}%) dependencies available")
+        except Exception as e:
+            print(f"⚠️  Error getting dependency stats: {e}")
+            return _fallback_optional_dependencies_test()
         
-        # Attempt installations for missing packages
+        # Network-resilient: Safe detailed status check
+        try:
+            status = manager.get_all_dependencies_status()
+        except Exception as e:
+            print(f"⚠️  Error checking detailed dependency status: {e}")
+            return _fallback_optional_dependencies_test()
+        
+        # Network-resilient: Process available dependencies with fallback info
+        # Optional Dependencies Handling: Show fallback immediately to reassure users
         missing_packages = []
         for dep_name, dep_status in status.items():
             if dep_status['available']:
                 print(f"✓ {dep_name} available")
             else:
                 print(f"? {dep_name} missing (optional)")
-                if dep_status['spec']['pip_package']:
+                # Optional Dependencies Handling: Show fallback mechanism immediately
+                fallback = dep_status.get('spec', {}).get('fallback', 'Basic functionality maintained')
+                print(f"  💡 Fallback: {fallback}")
+                if dep_status.get('spec', {}).get('pip_package'):
                     missing_packages.append(dep_status['spec']['pip_package'])
         
         if missing_packages:
             print(f"\n🔧 Attempting to install optional packages...")
-            print("   Note: Some may fail due to system requirements or network issues")
+            print("   Note: Network failures are expected and handled gracefully")
+            print("   💡 Optional Dependencies Handling: Application will work with fallback mechanisms if installation fails")
             print("   💡 Use install_optional_dependencies.sh for comprehensive installation")
             
-            # Try to install each package individually with better error handling
-            for package in missing_packages[:2]:  # Limit to first 2 to avoid long timeouts
+            # Network-resilient: Try to install packages with improved timeout handling
+            success_count = 0
+            for package in missing_packages[:3]:  # Limit to first 3 to prevent excessive timeouts
                 try:
                     module_name = package.split('>=')[0].replace('-', '_').lower()
                     print(f"🔧 Attempting to install {package}...")
                     
-                    result = run_command(f"pip install --timeout 30 {package}", check=False)
+                    # Network-resilient: Use timeout and graceful error handling
+                    result = run_command(f"pip install --timeout 30 {package}", check=False, timeout=90)
                     if result and result.returncode == 0:
+                        # Network-resilient: Safe import verification using subprocess for problematic modules
                         try:
-                            __import__(module_name)
-                            print(f"✅ {module_name} successfully installed and available")
+                            if module_name in ['transformers', 'torch']:
+                                # Use subprocess to avoid bus errors
+                                import sys
+                                verify_result = run_command(f"{sys.executable} -c \"import {module_name}; print('SUCCESS')\"", 
+                                                          check=False, timeout=15)
+                                if verify_result and verify_result.returncode == 0 and 'SUCCESS' in verify_result.stdout:
+                                    print(f"✅ {module_name} successfully installed and available")
+                                    success_count += 1
+                                else:
+                                    print(f"⚠️  {module_name} installed but not available (may need system dependencies or compatibility issues)")
+                            else:
+                                # Standard import for stable modules
+                                __import__(module_name)
+                                print(f"✅ {module_name} successfully installed and available")
+                                success_count += 1
                         except ImportError:
                             print(f"⚠️  {module_name} installed but not available (may need system dependencies)")
+                        except Exception as e:
+                            print(f"⚠️  {module_name} verification failed: {e}")
                     else:
                         print(f"⚠️  {package} installation failed (network/system dependency issue)")
-                        dep_info = next((d for d in status.values() if d['spec']['pip_package'] == package), None)
+                        # Show fallback immediately to reassure user
+                        dep_info = next((d for d in status.values() if d.get('spec', {}).get('pip_package') == package), None)
                         if dep_info:
                             print(f"   💡 Fallback: {dep_info['spec']['fallback']}")
                 except Exception as e:
                     print(f"⚠️  Error installing {package}: {e}")
+            
+            if success_count > 0:
+                print(f"✅ Successfully installed {success_count} optional packages")
+            else:
+                print("📝 No optional packages installed - application will use fallback mechanisms")
         
-        # Final status check
-        final_working, final_total, final_percentage = manager.get_summary_stats()
-        print(f"\n📊 Final Status: {final_working}/{final_total} ({final_percentage:.0f}%) dependencies available")
+        # Network-resilient: Safe final status check
+        try:
+            final_working, final_total, final_percentage = manager.get_summary_stats()
+            print(f"\n📊 Final Status: {final_working}/{final_total} ({final_percentage:.0f}%) dependencies available")
+        except Exception as e:
+            print(f"\n⚠️  Error getting final status (dependency check issue): {e}")
+            print("📝 Optional dependencies may be partially available - application will use fallbacks")
         
         return True
     
     except ImportError:
-        # Fallback to basic implementation if manager not available
+        # Network-resilient: Fallback to basic implementation if manager not available
         print("⚠️  Optional dependencies manager not available, using basic implementation")
-        
-        basic_packages = {
-            'pyttsx3': 'pyttsx3>=2.90',
-            'speech_recognition': 'SpeechRecognition>=3.10.0',
-            'pyaudio': 'pyaudio',
-        }
-        
-        missing_packages = []
-        for module_name, pip_package in basic_packages.items():
-            try:
-                __import__(module_name)
-                print(f"✓ {module_name} available")
-            except ImportError:
-                print(f"? {module_name} missing (optional)")
-                missing_packages.append(pip_package)
-        
-        print(f"\n📊 Basic Status: {len(basic_packages) - len(missing_packages)}/{len(basic_packages)} basic dependencies available")
-        return True
+        return _fallback_optional_dependencies_test()
+
+
+def _fallback_optional_dependencies_test():
+    """Network-resilient fallback for optional dependency testing when manager fails."""
+    print("🔄 Using fallback optional dependency testing...")
+    
+    basic_packages = {
+        'pyttsx3': {'package': 'pyttsx3>=2.90', 'fallback': 'Text output only (no audio)'},
+        'speech_recognition': {'package': 'SpeechRecognition>=3.10.0', 'fallback': 'File-based audio processing only'},
+        'pyaudio': {'package': 'pyaudio', 'fallback': 'File-based audio processing only'},
+    }
+    
+    missing_packages = []
+    available_count = 0
+    
+    for module_name, info in basic_packages.items():
+        try:
+            __import__(module_name)
+            print(f"✓ {module_name} available")
+            available_count += 1
+        except ImportError:
+            print(f"? {module_name} missing (optional)")
+            print(f"  💡 Fallback: {info['fallback']}")
+            missing_packages.append(info['package'])
+    
+    print(f"\n📊 Basic Status: {available_count}/{len(basic_packages)} basic optional dependencies available")
+    print("📝 Application will work with available dependencies and fallback mechanisms")
+    return True
+
 
 def test_and_install_external_dependencies():
     """Test and install critical external dependencies."""
@@ -338,9 +435,21 @@ def install_dependencies():
         print("   pip install pyaudio")
         return True
     else:
-        # Try normal pip install
-        result = run_command("pip install -r requirements.txt")
-        return result is not None
+        # Network-resilient: Try normal pip install with timeout and retry logic
+        print("Installing core dependencies from requirements.txt...")
+        print("⚠️  Note: Network issues may cause timeouts - this is handled gracefully")
+        
+        result = run_command("pip install -r requirements.txt", timeout=300)  # 5 minute timeout
+        if result is not None:
+            print("✅ Core dependencies installation completed")
+            return True
+        else:
+            print("⚠️  Installation from requirements.txt failed or timed out")
+            print("🔄 Attempting fallback installation of critical packages...")
+            
+            # Network-resilient fallback: try core packages individually
+            critical_packages = ['numpy>=2.3.0', 'matplotlib>=3.10.0', 'websockets>=15.0', 'flask>=3.1.0', 'flask-cors>=6.0.0']
+            return install_pip_packages(critical_packages)
 
 
 
